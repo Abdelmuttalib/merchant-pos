@@ -59,7 +59,7 @@ import {
 import { IconButton } from "@/components/ui/icon-button";
 import DashboardLayout from "@/components/layout/dashboard-layout";
 import { GridViewIcon, ListViewIcon } from "@/components/icons";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Typography from "@/components/ui/typography";
 import { productsData } from "@/data/products";
 import type { Product } from "@/lib/types";
@@ -70,6 +70,14 @@ type ViewType = "list" | "grid";
 
 export default function Products() {
   const [view, setView] = useState<ViewType>("list");
+
+  const [search, setSearch] = useState("");
+
+  const filteredProducts = useMemo(() => {
+    return productsData.filter((product) =>
+      product.name.toLowerCase().includes(search.toLowerCase()),
+    );
+  }, [search]);
 
   function handleViewChange(view: ViewType) {
     setView(view);
@@ -183,6 +191,8 @@ export default function Products() {
               type="search"
               placeholder="Search products"
               className="h-11 w-full rounded-lg border-none bg-background pl-12 shadow-none hover:bg-accent-hover/60"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
             />
           </div>
           {/* actions */}
@@ -194,7 +204,6 @@ export default function Products() {
             >
               <ListViewIcon />
             </IconButton>
-            <NewItemFormDialog />
             <IconButton
               size="sm"
               variant={view === "grid" ? "secondary" : "ghost"}
@@ -317,10 +326,10 @@ export default function Products() {
           </header>
           <main className="grid flex-1 items-start gap-4 py-4 sm:py-0 md:gap-8">
             {/* content */}
-            {view === "list" && <ListView products={productsData} />}
-            {view === "grid" && <GridView products={productsData} />}
+            {view === "list" && <ListView products={filteredProducts} />}
+            {view === "grid" && <GridView products={filteredProducts} />}
             <div className="text-xs text-foreground-muted">
-              <strong>{productsData.length}</strong> products
+              <strong>{filteredProducts.length}</strong> products
               {/* Showing <strong>1-10</strong> of <strong>32</strong> products */}
               {/* Showing <strong>1-10</strong> of <strong>32</strong> products */}
             </div>
@@ -401,43 +410,57 @@ function ListView({ products }: { products: Product[] }) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {products.map((product) => (
-          <TableRow key={`${product.name}${product.createdAt}`}>
-            <TableCell className="hidden sm:table-cell">
-              <Image
-                src="https://images.unsplash.com/photo-1606963060045-1e3eaa0e6eac?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                alt="Product image"
-                className="aspect-square rounded-md object-cover"
-                height="40"
-                width="40"
-              />
+        {products.length ? (
+          products.map((product) => (
+            <TableRow key={`${product.name}${product.createdAt}`}>
+              <TableCell className="hidden sm:table-cell">
+                <Image
+                  src="https://images.unsplash.com/photo-1606963060045-1e3eaa0e6eac?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                  alt="Product image"
+                  className="aspect-square rounded-md object-cover"
+                  height="40"
+                  width="40"
+                />
+              </TableCell>
+              <TableCell className="font-medium">{product.name}</TableCell>
+              <TableCell>
+                <Badge
+                  color={getProductStatusBadgeColor(product.status)}
+                  className="capitalize"
+                >
+                  {product.status}
+                </Badge>
+              </TableCell>
+              <TableCell className="hidden md:table-cell">
+                {/* $  */}
+                {product.price}
+              </TableCell>
+              <TableCell className="hidden md:table-cell">
+                {/* 25 */}
+                {product.totalSales}
+              </TableCell>
+              <TableCell className="hidden md:table-cell">
+                {/* 2023-07-12 10:42 AM */}
+                {formatShortDateWithYear(product.createdAt)}
+              </TableCell>
+              <TableCell>
+                <ProductMenuOptions />
+              </TableCell>
+            </TableRow>
+          ))
+        ) : (
+          <TableRow>
+            <TableCell className="hidden sm:table-cell"></TableCell>
+            <TableCell className="py-3 text-sm text-foreground-lighter">
+              - no products found
             </TableCell>
-            <TableCell className="font-medium">{product.name}</TableCell>
-            <TableCell>
-              <Badge
-                color={getProductStatusBadgeColor(product.status)}
-                className="capitalize"
-              >
-                {product.status}
-              </Badge>
-            </TableCell>
-            <TableCell className="hidden md:table-cell">
-              {/* $  */}
-              {product.price}
-            </TableCell>
-            <TableCell className="hidden md:table-cell">
-              {/* 25 */}
-              {product.totalSales}
-            </TableCell>
-            <TableCell className="hidden md:table-cell">
-              {/* 2023-07-12 10:42 AM */}
-              {formatShortDateWithYear(product.createdAt)}
-            </TableCell>
-            <TableCell>
-              <ProductMenuOptions />
-            </TableCell>
+            <TableCell></TableCell>
+            <TableCell className="hidden md:table-cell"></TableCell>
+            <TableCell className="hidden md:table-cell"></TableCell>
+            <TableCell className="hidden md:table-cell"></TableCell>
+            <TableCell></TableCell>
           </TableRow>
-        ))}
+        )}
       </TableBody>
     </Table>
   );
@@ -446,63 +469,67 @@ function ListView({ products }: { products: Product[] }) {
 function GridView({ products }: { products: Product[] }) {
   return (
     <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">
-      {products.map((product) => (
-        <div
-          key={product.name}
-          className="group relative flex w-full max-w-sm flex-col gap-y-3 rounded-lg border bg-background p-4"
-        >
-          <div className="relative h-56 w-full">
-            <Image
-              src="https://images.unsplash.com/photo-1606963060045-1e3eaa0e6eac?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-              alt="Product image"
-              className="rounded-md object-cover"
-              layout="fill"
-            />
-          </div>
-          <div className="flex w-full items-center justify-between">
-            <Typography as="h3" variant="base/regular">
-              {product.name}
-            </Typography>
-            {/* <h3 className="mb-2 text-lg font-semibold">{product.name}</h3> */}
+      {products.length ? (
+        products.map((product) => (
+          <div
+            key={product.name}
+            className="group relative flex w-full max-w-sm flex-col gap-y-3 rounded-lg border bg-background p-4"
+          >
+            <div className="relative h-56 w-full">
+              <Image
+                src="https://images.unsplash.com/photo-1606963060045-1e3eaa0e6eac?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                alt="Product image"
+                className="rounded-md object-cover"
+                layout="fill"
+              />
+            </div>
+            <div className="flex w-full items-center justify-between">
+              <Typography as="h3" variant="base/regular">
+                {product.name}
+              </Typography>
+              {/* <h3 className="mb-2 text-lg font-semibold">{product.name}</h3> */}
 
-            <Badge
-              color={getProductStatusBadgeColor(product.status)}
-              className="capitalize"
-            >
-              {product.status}
-            </Badge>
-          </div>
-          <div>
-            <p className="font-medium">{product.price}</p>
-            {/* <Badge
+              <Badge
+                color={getProductStatusBadgeColor(product.status)}
+                className="capitalize"
+              >
+                {product.status}
+              </Badge>
+            </div>
+            <div>
+              <p className="font-medium">{product.price}</p>
+              {/* <Badge
               color={getProductStatusBadgeColor(product.status)}
               className="capitalize"
             >
               {product.status}
             </Badge> */}
-          </div>
-          {/* <p className="mb-2 text-gray-600">Price: {product.price}</p> */}
-          <div className="flex w-full items-center justify-between">
-            <div className="flex w-full items-center gap-x-5 text-sm">
-              <div className="inline-flex gap-x-1">
-                <p className="text-foreground-lighter">Stock:</p>
-                <span className="text-foreground">{product.totalSales}</span>
-              </div>
-              <div className="inline-flex gap-x-1">
-                <p className="text-foreground-lighter">
-                  Sales:{" "}
-                  {/* Created At: {new Date(product.createdAt).toLocaleString()} */}
-                </p>
-                <span className="text-foreground">{product.totalSales}</span>
-              </div>
             </div>
+            {/* <p className="mb-2 text-gray-600">Price: {product.price}</p> */}
+            <div className="flex w-full items-center justify-between">
+              <div className="flex w-full items-center gap-x-5 text-sm">
+                <div className="inline-flex gap-x-1">
+                  <p className="text-foreground-lighter">Stock:</p>
+                  <span className="text-foreground">{product.totalSales}</span>
+                </div>
+                <div className="inline-flex gap-x-1">
+                  <p className="text-foreground-lighter">
+                    Sales:{" "}
+                    {/* Created At: {new Date(product.createdAt).toLocaleString()} */}
+                  </p>
+                  <span className="text-foreground">{product.totalSales}</span>
+                </div>
+              </div>
 
-            <div className="-mb-3 -mr-3">
-              <ProductMenuOptions />
+              <div className="-mb-3 -mr-3">
+                <ProductMenuOptions />
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))
+      ) : (
+        <p className="text-sm text-foreground-lighter">No products found</p>
+      )}
     </div>
   );
 }
@@ -520,8 +547,8 @@ function ProductMenuOptions() {
         <DropdownMenuItem>Edit</DropdownMenuItem>
         <DropdownMenuItem>Preview</DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Copy ID</DropdownMenuItem>
-        <DropdownMenuSeparator />
+        {/* <DropdownMenuItem>Copy ID</DropdownMenuItem>
+        <DropdownMenuSeparator /> */}
         <DropdownMenuItem>Delete</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -569,343 +596,6 @@ function ProductMenuOptions() {
 //       </div>
 //     )
 // };
-
-import { CustomDialog } from "@/components/ui/animated-dialog";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { cn } from "@/lib/utils";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-export function NewItemFormDialog() {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const toggleModal = () => setIsOpen((prevValue) => !prevValue);
-
-  const form = useForm({
-    defaultValues: {
-      name: "",
-      price: "",
-      description: "",
-      category: "",
-      tags: "",
-      status: "",
-      stock: "",
-      sales: "",
-      createdAt: "",
-    },
-  });
-
-  // 2. Define a submit handler.
-  function onSubmit(values: NewItemFormValuesSchema) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-  }
-
-  return (
-    <>
-      <CustomDialog
-        open={isOpen}
-        onClose={toggleModal}
-        title="Add Product"
-        // className='px-0'
-        fullScreen
-        triggerButton={
-          <IconButton
-            size="xs"
-            variant="ghost"
-            className="text-foreground-muted"
-            onClick={toggleModal}
-          >
-            +
-          </IconButton>
-        }
-      >
-        <div className="-mx-6 flex flex-col border-b py-7 pb-[27px]">
-          <div className="px-6">
-            <Typography
-              as="p"
-              variant="sm/regular"
-              className="text-foreground-lighter"
-            >
-              Add a new product to your store
-            </Typography>
-          </div>
-          {/* <NotificationsTabs /> */}
-        </div>
-        {/* form */}
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="flex flex-col py-5"
-          >
-            <div className="flex flex-col">
-              <Accordion type="multiple" className="w-full space-y-3">
-                {/* genearal */}
-                <div>
-                  <AccordionItem value="general" className="border-b-0">
-                    <AccordionTrigger
-                      className={cn(
-                        "flex items-center gap-x-3 rounded-md bg-accent-hover/60 px-3 py-2.5 text-sm font-medium text-foreground-light hover:bg-accent-hover hover:no-underline",
-                        // {
-                        //   "bg-accent-hover/60 text-primary": false,
-                        // },
-                      )}
-                    >
-                      General
-                    </AccordionTrigger>
-                    <AccordionContent className="space-y-7 px-3 py-4">
-                      <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Name</FormLabel>
-                            <FormControl>
-                              <Input placeholder="item name" {...field} />
-                            </FormControl>
-                            <FormDescription>
-                              {/* description for field */}
-                              Give your item a short and clear name.
-                            </FormDescription>
-                            {/* <FormMessage /> */}
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="description"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Description</FormLabel>
-                            <FormControl>
-                              <Textarea
-                                id="description"
-                                className="min-h-32"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormDescription>
-                              {/* description for field */}
-                              Describe your item.
-                            </FormDescription>
-                            {/* <FormMessage /> */}
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="price"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Price per unit</FormLabel>
-                            <FormControl>
-                              <div className="relative">
-                                <span className="absolute inline-flex h-full w-9 items-center justify-center rounded-l-md border border-r-0 border-foreground-muted-dark bg-accent-hover text-sm text-foreground-lighter">
-                                  $
-                                </span>
-                                <Input
-                                  id="price"
-                                  type="number"
-                                  className="pl-11"
-                                  {...field}
-                                />
-                              </div>
-                            </FormControl>
-                            <FormDescription>
-                              {/* This is your public display name. */}
-                            </FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="stock"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Stock</FormLabel>
-                            <FormControl>
-                              <Input id="stock" type="number" {...field} />
-                            </FormControl>
-                            <FormDescription>
-                              {/* This is your public display name. */}
-                            </FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="category"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Category</FormLabel>
-                            <Select
-                              onValueChange={field.onChange}
-                              defaultValue={field.value}
-                            >
-                              <FormControl>
-                                <SelectTrigger
-                                  id="category"
-                                  aria-label="Select category"
-                                >
-                                  <SelectValue placeholder="Select category" />
-                                </SelectTrigger>
-                              </FormControl>
-
-                              <SelectContent>
-                                <SelectItem value="clothing">
-                                  Clothing
-                                </SelectItem>
-                                <SelectItem value="electronics">
-                                  Electronics
-                                </SelectItem>
-                                <SelectItem value="accessories">
-                                  Accessories
-                                </SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormDescription>
-                              {/* This is your public display name. */}
-                            </FormDescription>
-                            {/* <FormMessage /> */}
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="status"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Item status</FormLabel>
-                            <Select
-                              onValueChange={field.onChange}
-                              defaultValue={field.value}
-                            >
-                              <FormControl>
-                                <SelectTrigger
-                                  id="status"
-                                  aria-label="Select status"
-                                >
-                                  <SelectValue placeholder="Select category" />
-                                </SelectTrigger>
-                              </FormControl>
-
-                              <SelectContent>
-                                {[
-                                  "draft",
-                                  "active",
-                                  "archived",
-                                  "inactive",
-                                ].map((status) => (
-                                  <SelectItem key={status} value={status}>
-                                    <Badge
-                                      color={getProductStatusBadgeColor(status)}
-                                      className="capitalize"
-                                    >
-                                      {status}
-                                    </Badge>
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormDescription>
-                              {/* This is your public display name. */}
-                            </FormDescription>
-                            {/* <FormMessage /> */}
-                          </FormItem>
-                        )}
-                      />
-                    </AccordionContent>
-                  </AccordionItem>
-                </div>
-                {/* media */}
-                <div>
-                  <AccordionItem value="media" className="border-b-0">
-                    <AccordionTrigger
-                      className={cn(
-                        "flex items-center gap-x-3 rounded-md bg-accent-hover/60 px-3 py-2.5 text-sm font-medium text-foreground-light hover:bg-accent-hover hover:no-underline",
-                        // {
-                        //   "bg-accent-hover/60 text-primary": false,
-                        // },
-                      )}
-                    >
-                      Media
-                    </AccordionTrigger>
-                    <AccordionContent className="space-y-7 px-3 py-4">
-                      <div className="grid gap-2">
-                        <Image
-                          src="https://images.unsplash.com/photo-1606963060045-1e3eaa0e6eac?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                          alt="Product image"
-                          className="aspect-video w-full rounded-md object-cover"
-                          height="300"
-                          width="300"
-                        />
-                        <div className="grid grid-cols-3 gap-2">
-                          <button>
-                            <Image
-                              src="https://images.unsplash.com/photo-1606963060045-1e3eaa0e6eac?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                              alt="Product image"
-                              className="aspect-square w-full rounded-md object-cover"
-                              height="84"
-                              width="84"
-                            />
-                          </button>
-                          <button>
-                            <Image
-                              src="https://images.unsplash.com/photo-1606963060045-1e3eaa0e6eac?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                              alt="Product image"
-                              className="aspect-square w-full rounded-md object-cover"
-                              height="84"
-                              width="84"
-                            />
-                          </button>
-                          <button className="flex aspect-square w-full items-center justify-center rounded-md border-2 border-dashed border-foreground-muted-dark">
-                            <Upload className="h-6 w-6 text-foreground-lighter" />
-                            <span className="sr-only">Upload</span>
-                          </button>
-                        </div>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                </div>
-              </Accordion>
-            </div>
-              <div className="w-full bg-white flex items-center justify-between gap-x-2 border-t mt-16 pt-6">
-              <Button variant="secondary">Discard</Button>
-              <Button type="submit" className="flex-1">Save Product</Button>
-              </div>
-          </form>
-        </Form>
-        {/* <div className='-mx-6 py-2'>
-          <NotificationsTabs />
-        </div> */}
-      </CustomDialog>
-    </>
-  );
-}
 
 {
   /* <IconButton className='relative' variant='ghost' onClick={toggleModal}>

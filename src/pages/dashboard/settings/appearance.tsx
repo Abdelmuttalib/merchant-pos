@@ -58,9 +58,6 @@ export default function AppearanceSettings() {
                 View and update your preferences
               </p>
             </div>
-            <div>
-              <Button variant="primary">Save Changes</Button>
-            </div>
           </div>
         </div>
         {/* settings */}

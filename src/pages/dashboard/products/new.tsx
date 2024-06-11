@@ -55,25 +55,14 @@ import {
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { newItemformSchema, type NewItemFormValuesSchema } from "@/components/views/item/item-form";
 
-const newItemformSchema = z.object({
-  name: z.string().min(1),
-  description: z.string().min(1),
-  price: z
-    .preprocess((val) => parseFloat(z.string().parse(val)), z.number().min(1)),
-  stock: z
-    .preprocess((val) => parseInt(z.string().parse(val)), z.number().min(1)),
-  category: z.string().min(1),
-  status: z.string().min(1),
-});
 
-type NewItemFormValuesSchema = z.infer<typeof newItemformSchema>;
 
 export default function CreateNewProductPage() {
   // 1. Define your form.
   const form = useForm<NewItemFormValuesSchema>({
     resolver: zodResolver(newItemformSchema),
-   
   });
 
   // 2. Define a submit handler.

@@ -1,15 +1,14 @@
+import { siteConfig } from "@/config/site-config";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
 const defaultMeta = {
-  title: "UTAK POS",
-  siteName: "UTAK POS",
-  description:
-    "UTAK POS is a point of sale system for businesses. UTAK POS is designed to be simple and easy to use, with features that help you manage your business more efficiently.",
-  // It is a web-based application that can be accessed from any device with an internet connection.
-  url: "",
-  type: "website",
-  image: "/favicon.ico",
+  title: siteConfig.title,
+  siteName: siteConfig.name,
+  description: siteConfig.description,
+  url: siteConfig.siteUrl,
+  type: siteConfig.type,
+  image: siteConfig.logo,
 };
 
 type SeoProps = {

@@ -3,6 +3,7 @@ import Head from "next/head";
 import { api } from "@/utils/api";
 import Image from "next/image";
 import { Button, ButtonLink } from "@/components/ui/button";
+import { siteConfig } from "@/config/site-config";
 
 export default function Home() {
 
@@ -32,23 +33,17 @@ export default function Home() {
             </span> */}
           </div>
           <div className="flex items-center gap-x-10 text-white text-sm">
-            {['Services', 'About', 'Contact'].map((item, i) => (
+            {siteConfig.navItems.map((item, i) => (
               <p key={`${item}${i}`}>
                 {item}
               </p>
             ))}
-
-            {/* <Button variant="secondary" className="rounded-xl font-normal" size='sm'>
-              Request a demo
-            </Button> */}
             <ButtonLink href='/dashboard'>
               Dashboard
             </ButtonLink>
           </div>
         </div>
-        {/* <div className="w-full h-full items-end absolute top-0 bg-blue-900 flex justify-end">
-
-</div> */}
+       
         <Image src="https://images.unsplash.com/photo-1556742393-d75f468bfcb0?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="POS system" layout="fill" objectFit="cover" quality={100} className="opacity-60" />
         {/* content */}
         <div className="w-full h-full items-end absolute inset-0 bg-transparent flex justify-end">

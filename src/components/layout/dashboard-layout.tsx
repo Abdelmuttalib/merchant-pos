@@ -16,6 +16,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { NewItemFormDialog } from "../views/item/item-form";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -168,9 +169,7 @@ function DashboardHeader({ pageTitle }: { pageTitle: string }) {
             </IconButton>
             {/* notifications */}
             <NotificationsDialog />
-            <IconButton size="xs" variant="secondary">
-              <Plus className="w-5" />
-            </IconButton>
+            <NewItemFormDialog />
           </div>
         </div>
       </Container>
