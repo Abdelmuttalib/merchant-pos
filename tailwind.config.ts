@@ -1,0 +1,222 @@
+import type { Config } from "tailwindcss";
+import { fontFamily } from "tailwindcss/defaultTheme";
+
+const config = {
+  darkMode: ["class"],
+  content: [
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
+  prefix: "",
+  theme: {
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
+    },
+    extend: {
+      fontFamily: {
+        sans: ["var(--font-sans)", ...fontFamily.sans],
+        // sans: ["var(--font-geist-sans)", ...fontFamily.sans],
+      },
+
+      fontSize: {
+        xs: "var(--font-xs)",
+        sm: "var(--font-sm)",
+        base: "var(--font-base)",
+        md: "var(--font-md)",
+        lg: "var(--font-lg)",
+        xl: "var(--font-xl)",
+        "display-xs": "var(--font-display-xs)",
+        "display-sm": "var(--font-display-sm)",
+        "display-md": "var(--font-display-md)",
+        "display-lg": "var(--font-display-lg)",
+        "display-xl": "var(--font-display-xl)",
+        "display-2xl": "var(--font-display-2xl)",
+      },
+
+      lineHeight: {
+        xs: "var(--line-height-xs)",
+        sm: "var(--line-height-sm)",
+        base: "var(--line-height-base)",
+        md: "var(--line-height-md)",
+        lg: "var(--line-height-lg)",
+        xl: "var(--line-height-xl)",
+        "display-xs": "var(--line-height-display-xs)",
+        "display-sm": "var(--line-height-display-sm)",
+        "display-md": "var(--line-height-display-md)",
+        "display-lg": "var(--line-height-display-lg)",
+        "display-xl": "var(--line-height-display-xl)",
+        "display-2xl": "var(--line-height-display-2xl)",
+      },
+
+      fontWeight: {
+        regular: "var(--font-weight-regular)",
+        medium: "var(--font-weight-medium)",
+        semibold: "var(--font-weight-semibold)",
+        bold: "var(--font-weight-bold)",
+      },
+
+      colors: {
+        // border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        // ring: "hsl(var(--ring))",
+        // background: "hsl(var(--background))",
+        // foreground: "hsl(var(--foreground))",
+        // primary: {
+        //   DEFAULT: "hsl(var(--primary))",
+        //   foreground: "hsl(var(--primary-foreground))",
+        // },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        // accent: {
+        //   DEFAULT: "hsl(var(--accent))",
+        //   foreground: "hsl(var(--accent-foreground))",
+        // },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+
+        background: {
+          DEFAULT: "hsl(var(--background))",
+          muted: "hsl(var(--background-muted))",
+          accent: "hsl(var(--color-accent))",
+        },
+        foreground: {
+          DEFAULT: "hsl(var(--color-text))",
+          light: "hsl(var(--color-text-light))",
+          lighter: "hsl(var(--color-text-lighter))",
+          muted: "hsl(var(--color-text-muted))",
+          "muted-light": "hsl(var(--color-text-muted-light))",
+          "muted-dark": "hsl(var(--color-text-muted-dark))",
+          "muted-darker": "hsl(var(--color-text-muted-darker))",
+        },
+
+        accent: {
+          DEFAULT: "hsl(var(--color-accent))",
+          foreground: "hsl(var(--color-accent-foreground))",
+          hover: "hsl(var(--color-accent-hover))",
+        },
+
+        ring: "hsl(var(--color-ring))",
+
+        layer: {
+          DEFAULT: "hsl(var(--layer-1))",
+          2: "hsl(var(--layer-2))",
+          3: "hsl(var(--layer-3))",
+          4: "hsl(var(--layer-4))",
+        },
+
+        border: {
+          DEFAULT: "hsl(var(--color-border))",
+          light: "hsl(var(--color-border-light))",
+          lighter: "hsl(var(--color-border-lighter))",
+          hover: "hsl(var(--color-border-hover))",
+          "light-hover": "hsl(var(--color-border-light-hover))",
+        },
+
+        borderRadius: {
+          DEFAULT: "var(--border-radius)",
+          sm: "var(--border-radius-sm)",
+          md: "var(--border-radius-md)",
+          lg: "var(--border-radius-lg)",
+          xl: "var(--border-radius-xl)",
+          full: "9999px",
+        },
+
+        // colors
+        primary: {
+          50: "hsl(var(--color-primary-50))",
+          100: "hsl(var(--color-primary-100))",
+          200: "hsl(var(--color-primary-200))",
+          300: "hsl(var(--color-primary-300))",
+          400: "hsl(var(--color-primary-400))",
+          500: "hsl(var(--color-primary-500))",
+          600: "hsl(var(--color-primary-600))",
+          700: "hsl(var(--color-primary-700))",
+          800: "hsl(var(--color-primary-800))",
+          900: "hsl(var(--color-primary-900))",
+          DEFAULT: "hsl(var(--color-primary))",
+          hover: "hsl(var(--color-primary-hover))",
+          active: "hsl(var(--color-primary-active))",
+          disabled: "hsl(var(--color-primary-disabled))",
+        },
+
+        // gray: {
+        //   DEFAULT: 'hsl(var(--color-gray))',
+        //   hover: 'hsl(var(--color-gray-hover))',
+        //   50: 'hsl(var(--color-gray-50))',
+        //   100: 'hsl(var(--color-gray-100))',
+        //   200: 'hsl(var(--color-gray-200))',
+        //   300: 'hsl(var(--color-gray-300))',
+        //   400: 'hsl(var(--color-gray-400))',
+        //   500: 'hsl(var(--color-gray-500))',
+        //   600: 'hsl(var(--color-gray-600))',
+        //   650: 'hsl(var(--color-gray-650))',
+        //   700: 'hsl(var(--color-gray-700))',
+        //   750: 'hsl(var(--color-gray-750))',
+        //   800: 'hsl(var(--color-gray-800))',
+        //   850: 'hsl(var(--color-gray-850))',
+        //   900: 'hsl(var(--color-gray-900))',
+        //   950: 'hsl(var(--color-gray-950))',
+        // },
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      keyframes: {
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+      },
+    },
+  },
+  plugins: [require("tailwindcss-animate")],
+} satisfies Config;
+
+export default config;
+
+// import { type Config } from "tailwindcss";
+// import { fontFamily } from "tailwindcss/defaultTheme";
+
+// export default {
+//   content: ["./src/**/*.tsx"],
+//   theme: {
+//     extend: {
+//       fontFamily: {
+//         sans: ["var(--font-geist-sans)", ...fontFamily.sans],
+//       },
+//     },
+//   },
+//   plugins: [],
+// } satisfies Config;
