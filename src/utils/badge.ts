@@ -1,5 +1,5 @@
-export function getProductStatusBadgeColor(status: string) {
-  switch (status.toLowerCase()) {
+export function getProductStatusBadgeColor(category: string) {
+  switch (category.toLowerCase()) {
     case "active":
       return "green";
     case "draft":

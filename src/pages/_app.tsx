@@ -8,6 +8,9 @@ import { ThemeColorWrapper } from "@/components/theme-color-wrapper";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+import { Toaster } from "sonner";
+import TailwindBreakpointIndicator from "@/components/breakpoint-indicator";
+
 const queryClient = new QueryClient();
 
 const MyApp: AppType = ({ Component, pageProps }) => {
@@ -19,10 +22,12 @@ const MyApp: AppType = ({ Component, pageProps }) => {
           defaultTheme="light"
           themes={["light", "dark"]}
         >
+          <Toaster position="top-right" expand={true} richColors />
           {/* <main className={GeistSans.className}> */}
           <main className="font-sans">
             <Component {...pageProps} />
           </main>
+          <TailwindBreakpointIndicator />
         </ThemeProvider>
       </ThemeColorWrapper>
     </QueryClientProvider>

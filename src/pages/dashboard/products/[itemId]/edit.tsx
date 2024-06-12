@@ -1,48 +1,6 @@
 import DashboardLayout from "@/components/layout/dashboard-layout";
-
-import Image from "next/image";
-import Link from "next/link";
-import {
-  ChevronLeft,
-  Home,
-  LineChart,
-  Package,
-  Package2,
-  PanelLeft,
-  PlusCircle,
-  Search,
-  Settings,
-  ShoppingCart,
-  Upload,
-  Users2,
-} from "lucide-react";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Textarea } from "@/components/ui/textarea";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { IconButton, IconLink } from "@/components/ui/icon-button";
-import Typography from "@/components/ui/typography";
-import { getProductStatusBadgeColor } from "@/utils/badge";
-import { z } from "zod";
-
 import {
   Form,
   FormControl,
@@ -52,33 +10,78 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
+import { IconLink } from "@/components/ui/icon-button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import Typography from "@/components/ui/typography";
+import {
+  NewItemFormValuesSchema,
+  newItemformSchema,
+} from "@/components/views/item/item-form";
+import { Item } from "@/lib/types";
+import { db } from "@/server/db";
+import { api } from "@/utils/api";
+import { getProductStatusBadgeColor } from "@/utils/badge";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { get, ref } from "firebase/database";
+import { ChevronLeft, Upload } from "lucide-react";
+import { type GetServerSideProps } from "next";
+import Image from "next/image";
 import { useForm } from "react-hook-form";
-import { newItemformSchema, type NewItemFormValuesSchema } from "@/components/views/item/item-form";
-import { useItems } from "@/hooks/use-items";
+import { toast } from "sonner";
 
+export default function EditItemPage({
+  itemId,
+  data,
+}: {
+  itemId: string;
+  data: any;
+}) {
+  const itemData = api.menu.items.getItemById.useQuery({ id: itemId });
 
-
-export default function CreateNewProductPage() {
-
-  const { onCreateItem } = useItems();
-
-  // 1. Define your form.
-  const form = useForm<NewItemFormValuesSchema>({
+  const form = useForm({
     resolver: zodResolver(newItemformSchema),
+    defaultValues: {
+      name: data?.name,
+      description: data?.description,
+      price: data?.price,
+      cost: data?.cost,
+      stock: data?.stock,
+      category: data?.category,
+      status: data?.status,
+    }
   });
 
-  // 2. Define a submit handler.
+//   console.log('default data: ', data);
+
+  const updateItemMutation = api.menu.items.updateItem.useMutation({
+    onSuccess: () => {
+      toast.success("Item updated successfully");
+    },
+  });
+
+  function onUpdateItem(data) {
+    updateItemMutation.mutate({ item: data });
+  }
+
   function onSubmit(values: NewItemFormValuesSchema) {
-    onCreateItem({...values, options: {}});
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+    onUpdateItem({
+        id: itemId,
+        ...values,
+        options: {},
+    })
+    console.log('values: ', values);
   }
 
   return (
-    <DashboardLayout pageTitle="New Product">
+    <DashboardLayout pageTitle="Edit Item">
       <div className="flex flex-col sm:gap-4">
         <main className="grid flex-1 items-start gap-4 md:gap-8">
           <Form {...form}>
@@ -87,7 +90,11 @@ export default function CreateNewProductPage() {
               className="mx-auto grid w-full flex-1 auto-rows-max gap-4"
             >
               <div className="flex items-center gap-4">
-                <IconLink href="/dashboard/products" variant="outline" className="h-7 w-7">
+                <IconLink
+                  href="/dashboard/products"
+                  variant="outline"
+                  className="h-7 w-7"
+                >
                   <ChevronLeft className="h-4 w-4" />
                   <span className="sr-only">Back</span>
                 </IconLink>
@@ -98,8 +105,8 @@ export default function CreateNewProductPage() {
                   In stock
                 </Badge>
                 <div className="hidden items-center gap-2 md:ml-auto md:flex">
-                  <Button variant="outline">Discard</Button>
-                  <Button type="submit">Save Product</Button>
+                  <Button variant="outline" type="button">Discard</Button>
+                  <Button type="submit">Save Changes</Button>
                 </div>
               </div>
               <div className="grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8">
@@ -144,7 +151,7 @@ export default function CreateNewProductPage() {
                       )}
                     />
                   </div>
-                  <div className="grid gap-1.5 sm:grid-cols-2 lg:grid-cols-3 sm:gap-3">
+                  <div className="grid gap-1.5 sm:grid-cols-2 sm:gap-3 lg:grid-cols-3">
                     <FormField
                       control={form.control}
                       name="price"
@@ -236,14 +243,10 @@ export default function CreateNewProductPage() {
                               </FormControl>
 
                               <SelectContent>
-                                <SelectItem value="clothing">
-                                  Clothing
-                                </SelectItem>
-                                <SelectItem value="electronics">
-                                  Electronics
-                                </SelectItem>
-                                <SelectItem value="accessories">
-                                  Accessories
+                                <SelectItem value="draft">Draft</SelectItem>
+                                <SelectItem value="active">Active</SelectItem>
+                                <SelectItem value="archieved">
+                                  Archieved
                                 </SelectItem>
                               </SelectContent>
                             </Select>
@@ -269,7 +272,7 @@ export default function CreateNewProductPage() {
                                   id="status"
                                   aria-label="Select status"
                                 >
-                                  <SelectValue placeholder="Select category" />
+                                  <SelectValue placeholder="Select item status" />
                                 </SelectTrigger>
                               </FormControl>
 
@@ -343,10 +346,10 @@ export default function CreateNewProductPage() {
                 </div>
               </div>
               <div className="flex items-center justify-center gap-2 md:hidden">
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" type="button">
                   Discard
                 </Button>
-                <Button size="sm">Save Product</Button>
+                <Button size="sm">Save Changes</Button>
               </div>
             </form>
           </Form>
@@ -355,3 +358,38 @@ export default function CreateNewProductPage() {
     </DashboardLayout>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+  const itemId = params?.itemId as string;
+
+  if (!itemId) {
+    return {
+      redirect: {
+        destination: "/dashboard/products",
+        permanent: false,
+      },
+    };
+  }
+
+  async function getItemData() {
+    const menuItemsRef = ref(db, `menuItems/${itemId}`);
+    const snapshot = await get(menuItemsRef);
+
+    if (snapshot.exists()) {
+      const data: Item[] = snapshot.val();
+      // const items = firebaseObjectToArray(data);
+      return { ...data, id: itemId };
+    } else {
+      return { message: "No data available" };
+    }
+  }
+
+  const data = await getItemData();
+
+  return {
+    props: {
+      itemId,
+      data,
+    },
+  };
+};

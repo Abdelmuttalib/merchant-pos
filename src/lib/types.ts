@@ -6,11 +6,22 @@
 //     createdAt: "2024-06-01 07:15 PM",
 //   },
 
-export type Product = {
+export type Item = {
   image: string;
   name: string;
-  status: string;
-  price: string;
-  totalSales: string;
-  createdAt: string;
+  category: string;
+  price: number;
+  cost: number;
+  sales: number;
+  stock: number;
+  options: Record<string, any>;
 };
+
+export type Category = {
+  id: string;
+  name: string;
+  description: string;
+  createdAt: string;
+}
+
+export type ViewType = "list" | "grid";

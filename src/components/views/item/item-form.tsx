@@ -35,17 +35,43 @@ import { IconButton } from "@/components/ui/icon-button";
 import { useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useItems } from "@/hooks/use-items";
 
 export const newItemformSchema = z.object({
   name: z.string().min(1),
   description: z.string().min(1),
+  // price: z.preprocess(
+  //   (val) => parseFloat(z.string().parse(val)),
+  //   z.number().min(1),
+  // ),
+  // price: z.preprocess(
+  //   (val) => {
+  //     if (typeof val === "string") {
+  //       return parseFloat(val);
+  //     }
+  //     return val;
+  //   },
+  //   z.number().min(1, { message: "Price must be at least 1" })
+  // ),
+  // cost: z.preprocess(
+  //   (val) => parseFloat(z.string().parse(val)),
+  //   z.number().min(1),
+  // ),
+  // stock: z.preprocess(
+  //   (val) => parseInt(z.string().parse(val)),
+  //   z.number().min(1),
+  // ),
   price: z.preprocess(
-    (val) => parseFloat(z.string().parse(val)),
-    z.number().min(1),
+    (val) => parseFloat(val as string),
+    z.number().min(1, { message: "Price must be at least 1" })
+  ),
+  cost: z.preprocess(
+    (val) => parseFloat(val as string),
+    z.number().min(1, { message: "Cost must be at least 1" })
   ),
   stock: z.preprocess(
-    (val) => parseInt(z.string().parse(val)),
-    z.number().min(1),
+    (val) => parseInt(val as string, 10),
+    z.number().min(1, { message: "Stock must be at least 1" })
   ),
   category: z.string().min(1),
   status: z.string().min(1),
@@ -54,6 +80,8 @@ export const newItemformSchema = z.object({
 export type NewItemFormValuesSchema = z.infer<typeof newItemformSchema>;
 
 export function NewItemFormDialog() {
+  const { onCreateItem } = useItems();
+
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleModal = () => setIsOpen((prevValue) => !prevValue);
@@ -65,15 +93,21 @@ export function NewItemFormDialog() {
   // 2. Define a submit handler.
   function onSubmit(values: SubmitHandler<NewItemFormValuesSchema>) {
     // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+    onCreateItem({ ...values, options: {} });
+    form.reset();
+    toggleModal();
+  }
+
+  function onDiscard() {
+    form.reset();
+    toggleModal();
   }
 
   return (
     <>
       <CustomDialog
         open={isOpen}
-        onClose={toggleModal}
+        onClose={onDiscard}
         title="Add Product"
         // className='px-0'
         fullScreen
@@ -172,6 +206,32 @@ export function NewItemFormDialog() {
                                 </span>
                                 <Input
                                   id="price"
+                                  type="number"
+                                  className="pl-11"
+                                  {...field}
+                                />
+                              </div>
+                            </FormControl>
+                            <FormDescription>
+                              {/* This is your public display name. */}
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="cost"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Cost per unit</FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <span className="absolute inline-flex h-full w-9 items-center justify-center rounded-l-md border border-r-0 border-foreground-muted-dark bg-accent-hover text-sm text-foreground-lighter">
+                                  $
+                                </span>
+                                <Input
+                                  id="cost"
                                   type="number"
                                   className="pl-11"
                                   {...field}
@@ -339,7 +399,7 @@ export function NewItemFormDialog() {
               </Accordion>
             </div>
             <div className="mt-16 flex w-full items-center justify-between gap-x-2 border-t bg-background pt-6">
-              <Button variant="secondary" onClick={toggleModal}>
+              <Button variant="secondary" onClick={onDiscard}>
                 Discard
               </Button>
               <Button type="submit" className="flex-1">

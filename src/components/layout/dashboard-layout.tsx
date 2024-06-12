@@ -3,7 +3,7 @@ import { Container } from "@/components/ui/container";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/router";
-import { HomeIcon, SettingsIcon, StoreIcon } from "../icons";
+import { HomeIcon, SettingsIcon, SquaresIcon, StoreIcon } from "../icons";
 import { IconButton } from "../ui/icon-button";
 import { Bell, Plus, Search } from "lucide-react";
 import { Button } from "../ui/button";
@@ -31,8 +31,13 @@ const dashboardLinks = [
   },
   {
     href: "/dashboard/products",
-    label: "Products",
+    label: "Menu",
     icon: <StoreIcon />,
+  },
+  {
+    href: "/dashboard/categories",
+    label: "Categories",
+    icon: <SquaresIcon />,
   },
   {
     href: "/dashboard/settings/general",
