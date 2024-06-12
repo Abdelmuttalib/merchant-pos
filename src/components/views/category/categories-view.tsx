@@ -16,13 +16,12 @@ import {
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
-import { Button, ButtonLink } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -37,15 +36,11 @@ import {
   TableRow,
 } from "@/components/ui/table-2";
 import { IconButton } from "@/components/ui/icon-button";
-import DashboardLayout from "@/components/layout/dashboard-layout";
 import { GridViewIcon, ListViewIcon } from "@/components/icons";
 import { useMemo, useState } from "react";
-import Typography from "@/components/ui/typography";
 import type { Category, ViewType } from "@/lib/types";
 import { formatShortDateWithYear } from "@/lib/date";
 import { getProductStatusBadgeColor } from "@/utils/badge";
-import { api } from "@/utils/api";
-import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/router";
 import { useCategories } from "@/hooks/use-categories";
@@ -57,7 +52,7 @@ export default function CategoriesView() {
 
   const { categories, isLoadingCategories, onDeleteCategory } = useCategories();
 
-  const filteredCategories = useMemo(() => {
+  const filteredCategories: Category[] = useMemo(() => {
     return categories?.filter((category) =>
       category.name.toLowerCase().includes(search.toLowerCase()),
     );

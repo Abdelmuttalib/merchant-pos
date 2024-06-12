@@ -223,7 +223,7 @@ export default function ItemsView() {
               <GridViewIcon />
             </IconButton>
             <ButtonLink
-              href="/dashboard/products/new"
+              href="/dashboard/menu/new"
               iconLeft={<Plus className="w-5" />}
             >
               New Product
@@ -335,7 +335,7 @@ function ListView({
           <TableHead>Category</TableHead>
           <TableHead className="hidden md:table-cell">Price</TableHead>
           <TableHead className="hidden md:table-cell">Cost</TableHead>
-          <TableHead className="hidden md:table-cell">Sales</TableHead>
+          {/* <TableHead className="hidden md:table-cell">Sales</TableHead> */}
           <TableHead className="hidden md:table-cell">Status</TableHead>
           <TableHead className="hidden md:table-cell">Created at</TableHead>
           <TableHead>
@@ -360,9 +360,9 @@ function ListView({
               <TableCell className="hidden md:table-cell">
                 <Skeleton className="h-6 w-14 rounded-md capitalize" />
               </TableCell>
-              <TableCell className="hidden md:table-cell">
+              {/* <TableCell className="hidden md:table-cell">
                 <Skeleton className="h-6 w-12 rounded-md capitalize" />
-              </TableCell>
+              </TableCell> */}
               <TableCell className="hidden md:table-cell">
                 <Skeleton className="h-6 w-12 rounded-md capitalize" />
               </TableCell>
@@ -389,7 +389,7 @@ function ListView({
                 <TableCell className="font-medium">{item.name}</TableCell>
                 <TableCell>
                   <Badge
-                    color={getProductStatusBadgeColor(item.category)}
+                    color='blue'
                     className="capitalize"
                   >
                     {item.category}
@@ -403,13 +403,12 @@ function ListView({
                   {/* $  */}
                   {item.cost}
                 </TableCell>
-                <TableCell className="hidden md:table-cell">
-                  {/* 25 */}
+                {/* <TableCell className="hidden md:table-cell">
                   {item.sales}
-                </TableCell>
+                </TableCell> */}
                 <TableCell>
                   <Badge
-                    color='blue'
+                    color={getProductStatusBadgeColor(item.status)}
                     className="capitalize"
                   >
                     {item.status ?? '-'}
@@ -454,7 +453,7 @@ function GridView({
   error: unknown;
 }) {
   return (
-    <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">
+    <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
       {!isLoading && data && data.length > 0
         ? data.map((item) => (
             <div
@@ -580,7 +579,7 @@ function ItemMenuOptions({ itemId }: { itemId: string }) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="absolute">
         <DropdownMenuItem
-          onClick={() => push(`/dashboard/products/${itemId}/edit`)}
+          onClick={() => push(`/dashboard/menu/${itemId}/edit`)}
         >
           Edit
         </DropdownMenuItem>

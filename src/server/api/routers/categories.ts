@@ -2,16 +2,9 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { get, push, ref, set, serverTimestamp } from "firebase/database";
 import { db } from "@/server/db";
-import { Category } from "@/lib/types";
+import type { Category } from "@/lib/types";
+import { firebaseObjectValToArray } from "@/lib/db";
 
-function firebaseObjectToArray(object: Record<string, any>) {
-  return Object.entries(object).map(([key, value], i) => {
-    return {
-      id: key,
-      ...value,
-    };
-  });
-}
 
 export const categoriesRouter = createTRPCRouter({
   getCategories: publicProcedure.query(async () => {
@@ -20,7 +13,7 @@ export const categoriesRouter = createTRPCRouter({
 
     if (snapshot.exists()) {
       const data = snapshot.val();
-      const categories: Category[] = firebaseObjectToArray(data);
+      const categories: Category[] = firebaseObjectValToArray(data);
       return categories;
     } else {
       return { message: "No data available" };

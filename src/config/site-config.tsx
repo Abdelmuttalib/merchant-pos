@@ -30,7 +30,7 @@ export const siteConfig = {
       icon: <HomeIcon />,
     },
     {
-      href: "/dashboard/products",
+      href: "/dashboard/menu",
       label: "Products",
       icon: <StoreIcon />,
     },

@@ -4,9 +4,8 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/router";
 import { HomeIcon, SettingsIcon, SquaresIcon, StoreIcon } from "../icons";
-import { IconButton } from "../ui/icon-button";
+import { IconButton } from "@/components/ui/icon-button";
 import { Bell, Plus, Search } from "lucide-react";
-import { Button } from "../ui/button";
 import { NotificationsDialog } from "../notifications/notifications-dialog";
 import Seo from "../seo";
 
@@ -16,7 +15,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { NewItemFormDialog } from "../views/item/item-form";
+import { NewItemFormDialog } from "@/components/views/item/item-form";
+import Typography from "@/components/ui/typography";
+import { siteConfig } from "@/config/site-config";
+import { sitePaths } from "@/lib/site-paths";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -25,41 +27,43 @@ interface DashboardLayoutProps {
 
 const dashboardLinks = [
   {
-    href: "/dashboard",
+    href: sitePaths.dashboard.home,
     label: "Dashboard",
     icon: <HomeIcon />,
   },
   {
-    href: "/dashboard/products",
+    href: sitePaths.dashboard.menu.home,
     label: "Menu",
     icon: <StoreIcon />,
   },
   {
-    href: "/dashboard/categories",
+    href: sitePaths.dashboard.categories.home,
     label: "Categories",
     icon: <SquaresIcon />,
   },
   {
-    href: "/dashboard/settings/general",
+    href: sitePaths.dashboard.settings.home,
     label: "Settings",
     icon: <SettingsIcon />,
     subLinks: [
       {
-        href: "/dashboard/settings/general",
+        href: sitePaths.dashboard.settings.general,
         label: "General",
       },
       {
-        href: "/dashboard/settings/appearance",
+        href: sitePaths.dashboard.settings.appearance,
         label: "Appearance",
       },
     ],
   },
-  // {
-  //   href: "/dashboard/profile",
-  //   label: "Profile",
-  // },
 ];
 
+{
+  /* rgba(10, 15, 15, 1) */
+}
+{
+  /* bg-[rgba(10,15,15,255)] */
+}
 
 export default function DashboardLayout({
   children,
@@ -68,8 +72,6 @@ export default function DashboardLayout({
   const { pathname } = useRouter();
   return (
     <>
-    {/* rgba(10, 15, 15, 1) */}
-    {/* bg-[rgba(10,15,15,255)] */}
       <Seo title={pageTitle} />
       <div className="fixed inset-0 flex h-full w-full">
         <aside className="w-72 px-6 py-7">
@@ -184,9 +186,18 @@ function DashboardHeader({ pageTitle }: { pageTitle: string }) {
 
 function DashboardFooter() {
   return (
-    <footer className="mt-auto h-14 flex-shrink-0 border-t">
+    <footer className="mt-auto flex h-14 flex-shrink-0 items-center border-t">
       <Container>
-        <div className="flex h-full items-center justify-between">footer</div>
+        <div className="flex h-full items-center justify-between">
+          <Typography
+            as="p"
+            variant="xs/regular"
+            className="text-foreground-muted"
+          >
+            © {new Date().getFullYear()} {siteConfig.name}. All rights
+            reserved.
+          </Typography>
+        </div>
       </Container>
     </footer>
   );

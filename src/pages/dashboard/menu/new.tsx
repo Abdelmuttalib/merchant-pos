@@ -1,24 +1,10 @@
 import DashboardLayout from "@/components/layout/dashboard-layout";
 
 import Image from "next/image";
-import Link from "next/link";
-import {
-  ChevronLeft,
-  Home,
-  LineChart,
-  Package,
-  Package2,
-  PanelLeft,
-  PlusCircle,
-  Search,
-  Settings,
-  ShoppingCart,
-  Upload,
-  Users2,
-} from "lucide-react";
+import { ChevronLeft, Upload } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -28,20 +14,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { IconButton, IconLink } from "@/components/ui/icon-button";
+import { IconLink } from "@/components/ui/icon-button";
 import Typography from "@/components/ui/typography";
 import { getProductStatusBadgeColor } from "@/utils/badge";
-import { z } from "zod";
 
 import {
   Form,
@@ -55,13 +31,23 @@ import {
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { newItemformSchema, type NewItemFormValuesSchema } from "@/components/views/item/item-form";
+import {
+  newItemformSchema,
+  type NewItemFormValuesSchema,
+} from "@/components/views/item/item-form";
 import { useItems } from "@/hooks/use-items";
+import { type GetServerSideProps } from "next";
+import { get, ref } from "firebase/database";
+import { db } from "@/server/db";
+import { firebaseObjectValToArray } from "@/lib/db";
+import type { Category } from "@/lib/types";
+import { getCategories } from "@/lib/categories";
 
-
-
-export default function CreateNewProductPage() {
-
+export default function CreateNewProductPage({
+  categories,
+}: {
+  categories: Category[];
+}) {
   const { onCreateItem } = useItems();
 
   // 1. Define your form.
@@ -71,7 +57,7 @@ export default function CreateNewProductPage() {
 
   // 2. Define a submit handler.
   function onSubmit(values: NewItemFormValuesSchema) {
-    onCreateItem({...values, options: {}});
+    onCreateItem({ ...values, options: {} });
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
@@ -87,7 +73,11 @@ export default function CreateNewProductPage() {
               className="mx-auto grid w-full flex-1 auto-rows-max gap-4"
             >
               <div className="flex items-center gap-4">
-                <IconLink href="/dashboard/products" variant="outline" className="h-7 w-7">
+                <IconLink
+                  href="/dashboard/menu"
+                  variant="outline"
+                  className="h-7 w-7"
+                >
                   <ChevronLeft className="h-4 w-4" />
                   <span className="sr-only">Back</span>
                 </IconLink>
@@ -98,7 +88,7 @@ export default function CreateNewProductPage() {
                   In stock
                 </Badge>
                 <div className="hidden items-center gap-2 md:ml-auto md:flex">
-                  <Button variant="outline">Discard</Button>
+                  <ButtonLink href="/dashboard/menu" variant="outline">Discard</ButtonLink>
                   <Button type="submit">Save Product</Button>
                 </div>
               </div>
@@ -144,7 +134,7 @@ export default function CreateNewProductPage() {
                       )}
                     />
                   </div>
-                  <div className="grid gap-1.5 sm:grid-cols-2 lg:grid-cols-3 sm:gap-3">
+                  <div className="grid gap-1.5 sm:grid-cols-2 sm:gap-3 lg:grid-cols-3">
                     <FormField
                       control={form.control}
                       name="price"
@@ -236,15 +226,16 @@ export default function CreateNewProductPage() {
                               </FormControl>
 
                               <SelectContent>
-                                <SelectItem value="clothing">
-                                  Clothing
-                                </SelectItem>
-                                <SelectItem value="electronics">
-                                  Electronics
-                                </SelectItem>
-                                <SelectItem value="accessories">
-                                  Accessories
-                                </SelectItem>
+                                {categories.map((category) => (
+                                  <SelectItem key={category.id} value={category.id}>
+                                    <Badge
+                                      color={getProductStatusBadgeColor(status)}
+                                      className="capitalize"
+                                    >
+                                      {category.name}
+                                    </Badge>
+                                  </SelectItem>
+                                ))}
                               </SelectContent>
                             </Select>
                             <FormDescription>
@@ -355,3 +346,14 @@ export default function CreateNewProductPage() {
     </DashboardLayout>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async () => {
+
+  const categories = await getCategories();
+
+  return {
+    props: {
+      categories,
+    },
+  };
+};

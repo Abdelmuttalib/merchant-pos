@@ -22,10 +22,11 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import Typography from "@/components/ui/typography";
 import {
-  NewItemFormValuesSchema,
+  type NewItemFormValuesSchema,
   newItemformSchema,
 } from "@/components/views/item/item-form";
-import { Item } from "@/lib/types";
+import { getCategories } from "@/lib/categories";
+import type { Category, Item } from "@/lib/types";
 import { db } from "@/server/db";
 import { api } from "@/utils/api";
 import { getProductStatusBadgeColor } from "@/utils/badge";
@@ -40,9 +41,11 @@ import { toast } from "sonner";
 export default function EditItemPage({
   itemId,
   data,
+  categories,
 }: {
   itemId: string;
   data: any;
+  categories: Category[];
 }) {
   const itemData = api.menu.items.getItemById.useQuery({ id: itemId });
 
@@ -56,10 +59,10 @@ export default function EditItemPage({
       stock: data?.stock,
       category: data?.category,
       status: data?.status,
-    }
+    },
   });
 
-//   console.log('default data: ', data);
+  //   console.log('default data: ', data);
 
   const updateItemMutation = api.menu.items.updateItem.useMutation({
     onSuccess: () => {
@@ -73,11 +76,11 @@ export default function EditItemPage({
 
   function onSubmit(values: NewItemFormValuesSchema) {
     onUpdateItem({
-        id: itemId,
-        ...values,
-        options: {},
-    })
-    console.log('values: ', values);
+      id: itemId,
+      ...values,
+      options: {},
+    });
+    console.log("values: ", values);
   }
 
   return (
@@ -91,7 +94,7 @@ export default function EditItemPage({
             >
               <div className="flex items-center gap-4">
                 <IconLink
-                  href="/dashboard/products"
+                  href="/dashboard/menu"
                   variant="outline"
                   className="h-7 w-7"
                 >
@@ -105,7 +108,9 @@ export default function EditItemPage({
                   In stock
                 </Badge>
                 <div className="hidden items-center gap-2 md:ml-auto md:flex">
-                  <Button variant="outline" type="button">Discard</Button>
+                  <Button variant="outline" type="button">
+                    Discard
+                  </Button>
                   <Button type="submit">Save Changes</Button>
                 </div>
               </div>
@@ -243,11 +248,16 @@ export default function EditItemPage({
                               </FormControl>
 
                               <SelectContent>
-                                <SelectItem value="draft">Draft</SelectItem>
-                                <SelectItem value="active">Active</SelectItem>
-                                <SelectItem value="archieved">
-                                  Archieved
-                                </SelectItem>
+                                {categories.map((category) => (
+                                  <SelectItem
+                                    key={category.id}
+                                    value={category.name}
+                                  >
+                                    <Badge color="blue" className="capitalize">
+                                      {category.name}
+                                    </Badge>
+                                  </SelectItem>
+                                ))}
                               </SelectContent>
                             </Select>
                             <FormDescription>
@@ -365,7 +375,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   if (!itemId) {
     return {
       redirect: {
-        destination: "/dashboard/products",
+        destination: "/dashboard/menu",
         permanent: false,
       },
     };
@@ -386,10 +396,13 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
   const data = await getItemData();
 
+  const categories = await getCategories();
+
   return {
     props: {
       itemId,
       data,
+      categories,
     },
   };
 };

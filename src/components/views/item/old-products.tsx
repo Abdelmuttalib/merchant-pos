@@ -302,7 +302,7 @@ export default function Products() {
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
                   <BreadcrumbLink asChild>
-                    <Link href="/dashboard/products">Products</Link>
+                    <Link href="/dashboard/menu">Products</Link>
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 
