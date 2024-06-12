@@ -336,6 +336,7 @@ function ListView({
           <TableHead className="hidden md:table-cell">Price</TableHead>
           <TableHead className="hidden md:table-cell">Cost</TableHead>
           {/* <TableHead className="hidden md:table-cell">Sales</TableHead> */}
+          <TableHead className="hidden md:table-cell">Stock</TableHead>
           <TableHead className="hidden md:table-cell">Status</TableHead>
           <TableHead className="hidden md:table-cell">Created at</TableHead>
           <TableHead>
@@ -355,16 +356,19 @@ function ListView({
                 <Skeleton className="h-6 w-52 rounded-md capitalize" />
               </TableCell>
               <TableCell>
-                <Skeleton className="h-6 w-14 rounded-md capitalize" />
+                <Skeleton className="h-6 w-16 rounded-md capitalize" />
               </TableCell>
               <TableCell className="hidden md:table-cell">
                 <Skeleton className="h-6 w-14 rounded-md capitalize" />
               </TableCell>
-              {/* <TableCell className="hidden md:table-cell">
-                <Skeleton className="h-6 w-12 rounded-md capitalize" />
-              </TableCell> */}
               <TableCell className="hidden md:table-cell">
                 <Skeleton className="h-6 w-12 rounded-md capitalize" />
+              </TableCell>
+              <TableCell className="hidden md:table-cell">
+                <Skeleton className="h-6 w-9 rounded-md capitalize" />
+              </TableCell>
+              <TableCell className="hidden md:table-cell">
+                <Skeleton className="h-6 w-14 rounded-md capitalize" />
               </TableCell>
               <TableCell className="hidden md:table-cell">
                 <Skeleton className="h-6 w-24 rounded-md capitalize" />
@@ -401,7 +405,11 @@ function ListView({
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
                   {/* $  */}
-                  {item.cost}
+                  ${item.cost}
+                </TableCell>
+                <TableCell className="hidden md:table-cell">
+                  {/* $  */}
+                  {item.stock}
                 </TableCell>
                 {/* <TableCell className="hidden md:table-cell">
                   {item.sales}
