@@ -5,8 +5,8 @@ import { db } from "@/server/db";
 import type { Category } from "@/lib/types";
 import { firebaseObjectValToArray } from "@/lib/db";
 
-
 export const categoriesRouter = createTRPCRouter({
+  //
   getCategories: publicProcedure.query(async () => {
     const categoriesRef = ref(db, "categories");
     const snapshot = await get(categoriesRef);
@@ -75,7 +75,7 @@ export const categoriesRouter = createTRPCRouter({
     )
     .mutation(async ({ input }) => {
       const categoryRef = ref(db, `categories/${input.id}`);
-      set(categoryRef, input)
+      set(categoryRef, { ...input, updatedAt: serverTimestamp() })
         .then(() => {
           console.log("Category updated successfully");
         })

@@ -97,7 +97,7 @@ export default function DashboardLayout({
                     <Link
                       href={link.href}
                       className={cn(
-                        "flex items-center gap-x-3 rounded-md px-3 py-2 font-medium text-foreground-light hover:bg-accent-hover/60",
+                        "flex items-center gap-x-3 rounded-lg px-3 py-2 font-medium text-foreground-light hover:bg-accent-hover/60",
                         {
                           "bg-accent-hover/60 text-primary": isActive,
                         },
