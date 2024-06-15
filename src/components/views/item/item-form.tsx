@@ -37,6 +37,22 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useItems } from "@/hooks/use-items";
 
+export const itemOptionSchema = z.object({
+  name: z.string().min(1, "Option name is required"),
+  price: z.preprocess(
+    (val) => parseFloat(val as string),
+    z.number().min(1, { message: "Price must be at least 1" }),
+  ),
+  cost: z.preprocess(
+    (val) => parseFloat(val as string),
+    z.number().min(1, { message: "Price must be at least 1" }),
+  ),
+  stock: z.preprocess(
+    (val) => parseInt(val as string, 10),
+    z.number().min(1, { message: "Stock must be at least 1" }),
+  ),
+});
+
 export const newItemformSchema = z.object({
   name: z.string().min(1),
   description: z.string().min(1),
@@ -63,18 +79,19 @@ export const newItemformSchema = z.object({
   // ),
   price: z.preprocess(
     (val) => parseFloat(val as string),
-    z.number().min(1, { message: "Price must be at least 1" })
+    z.number().min(1, { message: "Price must be at least 1" }),
   ),
   cost: z.preprocess(
     (val) => parseFloat(val as string),
-    z.number().min(1, { message: "Cost must be at least 1" })
+    z.number().min(1, { message: "Cost must be at least 1" }),
   ),
   stock: z.preprocess(
     (val) => parseInt(val as string, 10),
-    z.number().min(1, { message: "Stock must be at least 1" })
+    z.number().min(1, { message: "Stock must be at least 1" }),
   ),
   category: z.string().min(1),
   status: z.string().min(1),
+  options: z.array(itemOptionSchema).optional(),
 });
 
 export type NewItemFormValuesSchema = z.infer<typeof newItemformSchema>;

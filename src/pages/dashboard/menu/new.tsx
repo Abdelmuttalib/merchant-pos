@@ -1,7 +1,7 @@
 import DashboardLayout from "@/components/layout/dashboard-layout";
 
 import Image from "next/image";
-import { ChevronLeft, Upload } from "lucide-react";
+import { ChevronLeft, Plus, Trash, Upload } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button, ButtonLink } from "@/components/ui/button";
@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { IconLink } from "@/components/ui/icon-button";
+import { IconButton, IconLink } from "@/components/ui/icon-button";
 import Typography from "@/components/ui/typography";
 import { getProductStatusBadgeColor } from "@/utils/badge";
 
@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import {
   newItemformSchema,
   type NewItemFormValuesSchema,
@@ -42,6 +42,9 @@ import { db } from "@/server/db";
 import { firebaseObjectValToArray } from "@/lib/db";
 import type { Category } from "@/lib/types";
 import { getCategories } from "@/lib/categories";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 export default function CreateNewProductPage({
   categories,
@@ -53,19 +56,50 @@ export default function CreateNewProductPage({
   // 1. Define your form.
   const form = useForm<NewItemFormValuesSchema>({
     resolver: zodResolver(newItemformSchema),
+    defaultValues: {
+      options: [],
+    },
+  });
+
+  const [enableOptions, setEnableOptions] = useState(false);
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "options",
   });
 
   // 2. Define a submit handler.
   function onSubmit(values: NewItemFormValuesSchema) {
-    onCreateItem({ ...values, options: {} });
+    // onCreateItem({ ...values, options: {} });
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
   }
 
+  const [files, setFiles] = useState<File[]>([]);
+  const [previews, setPreviews] = useState<string[]>([]);
+
+  const handleFileChange = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    setFiles(selectedFiles);
+
+    console.log(e.target.files, selectedFiles);
+
+    const previewUrls = selectedFiles.map((file) => URL.createObjectURL(file));
+    setPreviews(previewUrls);
+
+    selectedFiles.forEach((file) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviews((prev) => [...prev, reader.result]);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
   return (
     <DashboardLayout pageTitle="New Product">
-      <div className="flex flex-col sm:gap-4">
+      <div className="flex flex-col pb-44 sm:gap-4">
         <main className="grid flex-1 items-start gap-4 md:gap-8">
           <Form {...form}>
             <form
@@ -88,7 +122,9 @@ export default function CreateNewProductPage({
                   In stock
                 </Badge>
                 <div className="hidden items-center gap-2 md:ml-auto md:flex">
-                  <ButtonLink href="/dashboard/menu" variant="outline">Discard</ButtonLink>
+                  <ButtonLink href="/dashboard/menu" variant="outline">
+                    Discard
+                  </ButtonLink>
                   <Button type="submit">Save Product</Button>
                 </div>
               </div>
@@ -227,9 +263,14 @@ export default function CreateNewProductPage({
 
                               <SelectContent>
                                 {categories.map((category) => (
-                                  <SelectItem key={category.id} value={category.id}>
+                                  <SelectItem
+                                    key={category.id}
+                                    value={category.id}
+                                  >
                                     <Badge
-                                      color={getProductStatusBadgeColor(status)}
+                                      color={getProductStatusBadgeColor(
+                                        category.name,
+                                      )}
                                       className="capitalize"
                                     >
                                       {category.name}
@@ -291,6 +332,115 @@ export default function CreateNewProductPage({
                       />
                     </div>
                   </div>
+                  <div className="space-y-8">
+                    {/* enable options */}
+                    <div className="flex flex-col space-y-1">
+                      <Badge
+                        as="div"
+                        className="flex w-fit items-center space-x-2"
+                        color="gray"
+                      >
+                        <Checkbox
+                          id="enableOptions"
+                          className="size-5 bg-background p-0.5"
+                          //  bg-accent-hover
+                          checked={enableOptions}
+                          onCheckedChange={(checked) => {
+                            setEnableOptions(checked);
+                            // reset options when unchecked
+                            if (!checked) {
+                              form.setValue("options", []);
+                            }
+                          }}
+                        />
+
+                        <label
+                          htmlFor="enableOptions"
+                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                          Enable options
+                        </label>
+                      </Badge>
+                      <Typography
+                        as="p"
+                        variant="xs/regular"
+                        className="text-foreground-lighter"
+                      >
+                        Options allow you to offer multiple variations of a
+                        product, such as different sizes or colors.
+                      </Typography>
+                    </div>
+                    <div>
+                      {/* options form
+                       */}
+                      {enableOptions && (
+                        <div className="space-y-5">
+                          {fields.map((field, index) => (
+                            <div key={field.id}>
+                              <div className="relative grid place-items-end gap-3 sm:grid-cols-5">
+                                <div>
+                                  <Label>Name</Label>
+                                  <Input
+                                    {...form.register(`options.${index}.name`)}
+                                    className=""
+                                    placeholder="Option name"
+                                  />
+                                </div>
+                                <div>
+                                  <Label>Price</Label>
+                                  <Input
+                                    {...form.register(`options.${index}.price`)}
+                                    type="number"
+                                    className=""
+                                    placeholder="Option price"
+                                  />
+                                </div>
+                                <div>
+                                  <Label>Cost</Label>
+                                  <Input
+                                    {...form.register(`options.${index}.cost`)}
+                                    type="number"
+                                    className=""
+                                    placeholder="Option cost"
+                                  />
+                                </div>
+                                <div>
+                                  <Label>Stock</Label>
+                                  <Input
+                                    {...form.register(`options.${index}.stock`)}
+                                    type="number"
+                                    className=""
+                                    placeholder="Option stock"
+                                  />
+                                </div>
+                                <Button
+                                  type="button"
+                                  variant="destructive"
+                                  // className="absolute -right-3 -top-3"
+                                  onClick={() => remove(index)}
+                                  iconLeft={<Trash className="w-4" />}
+                                >
+                                  Remove
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                          <Button
+                            type="button"
+                            variant="secondary"
+                            size="sm"
+                            // className=""
+                            onClick={() =>
+                              append({ name: "", price: 0, cost: 0, stock: 0 })
+                            }
+                            iconLeft={<Plus className="w-4 text-current" />}
+                          >
+                            Add Option
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
                 <div className="grid auto-rows-max items-start gap-2">
                   <div className="space-y-1">
@@ -298,15 +448,110 @@ export default function CreateNewProductPage({
                       Images
                     </Typography>
                   </div>
-                  <div className="grid gap-2">
-                    <Image
+                  {/* accept only images */}
+                  <div className="grid grid-cols-2 gap-2">
+                    {previews.map((preview, index) => (
+                      <div key={`${preview}${index}`} className={cn(
+                        "relative aspect-video w-full rounded-md object-cover",
+                        {
+                          "col-span-2": index === 0,
+                          "col-span-1": index !== 0,
+                        },
+                      )}>
+                      <Image
+                        src={preview}
+                        alt={`Preview ${index}`}
+                        className={cn(
+                          "relative aspect-video w-full rounded-md object-cover",
+                          {
+                            "col-span-2": index === 0,
+                            "col-span-1": index !== 0,
+                          },
+                        )}
+                        width={index === 0 ? 300 : 84}
+                        height={index === 0 ? 300 : 84}
+                      />
+                      <IconButton variant='destructive' onClick={() => {
+                        setPreviews((prev) => prev.filter((_, i) => i !== index));
+                        // setFiles((prev) => prev.filter((_, i) => i !== index));
+                      }}
+                      className="absolute top-1.5 right-1.5"
+                      size='xs'
+                      >
+                        <Trash className="w-[18px]" />
+                      </IconButton>
+                      </div>
+                    ))}
+                    {/* <Image
                       src="https://images.unsplash.com/photo-1606963060045-1e3eaa0e6eac?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                       alt="Product image"
                       className="aspect-video w-full rounded-md object-cover"
                       height="300"
                       width="300"
-                    />
-                    <div className="grid grid-cols-3 gap-2">
+                    /> */}
+                    <label
+                      className={cn(
+                        "group flex flex-col aspect-square h-full gap-y-2 w-full cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-foreground-muted-dark",
+                        {
+                          "col-span-2 row-span-1": previews.length === 0,
+                          "col-span-1": previews.length !== 0,
+                          "hidden": previews.length === 5,
+                        },
+                      )}
+                    >
+                      <Upload className="h-6 w-6 text-foreground-lighter transition-all duration-200 ease-in-out group-hover:-mt-6" />
+                      {/* <p className="mb-2 text-xs">
+                        <span className="font-semibold text-foreground underline underline-offset-4">
+                          Click to upload
+                        </span>
+                      </p> */}
+                      <p className="text-foreground-lighter text-xs text-center max-w-24">
+                        PNG, JPG, JPEG or WEBP
+                        {/* (MAX. 800x400px) */}
+                      </p>
+                      <span className="sr-only">Upload</span>
+                      <input
+                        type="file"
+                        multiple
+                        disabled={previews.length === 5}
+                        accept="image/png, image/jpg, image/jpeg"
+                        // onChange={handleFileChange}
+                        onChange={(e) => {
+                          // handle when there is a file selected, and it's not empty, so just append the new file
+                          console.log(e.target.files, typeof e.target.files);
+                          const a = Array.from(e.target.files);
+                          console.log(a);
+                          // setFiles((prev) => [...prev, ...a]);
+                          setPreviews((prev) => [
+                            ...prev,
+                            ...a.map((file) => URL.createObjectURL(file)),
+                          ]);
+                          // const d = Object.entries(e.target.files).map(([key, value]) => value);
+                          // console.log(d);
+                          // if (e?.target?.files?.length) {
+                          //   e?.target?.files?.forEach((file) => {
+                          //     setFiles((prev) => [...prev, file]);
+                          //     const imagePreviewUrl = URL.createObjectURL(
+                          //       file,
+                          //     );
+                          //     setPreviews((p) => [...p, imagePreviewUrl]);
+                          //   });
+                            
+                          // }
+                          // if (e?.target?.files?.length && e.target.files[0]) {
+                          //   const imagePreviewUrl = URL.createObjectURL(
+                          //     e.target.files[0],
+                          //   );
+                          //   setPreviews(p => [...p, imagePreviewUrl]);
+                          // }
+                        }}
+                        // onChange(
+                        //   e?.target?.files?.length ? e.target.files[0] : null
+                        // );
+                        className="hidden"
+                      />
+                    </label>
+                    {/* <div className="grid grid-cols-3 gap-2">
                       <button>
                         <Image
                           src="https://images.unsplash.com/photo-1606963060045-1e3eaa0e6eac?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -325,11 +570,7 @@ export default function CreateNewProductPage({
                           width="84"
                         />
                       </button>
-                      <button className="flex aspect-square w-full items-center justify-center rounded-md border-2 border-dashed border-foreground-muted-dark">
-                        <Upload className="h-6 w-6 text-foreground-lighter" />
-                        <span className="sr-only">Upload</span>
-                      </button>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>
@@ -348,7 +589,6 @@ export default function CreateNewProductPage({
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-
   const categories = await getCategories();
 
   return {

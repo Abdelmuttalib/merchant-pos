@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 
 import Typography from "@/components/ui/typography";
 import { cn } from "@/lib/utils";
@@ -8,6 +8,7 @@ interface BadgeProps extends React.BaseHTMLAttributes<HTMLSpanElement> {
   children: React.ReactNode;
   size?: "default" | "sm";
   variant?: "default" | "outline" | "secondary" | "bordered";
+  as?: React.ElementType;
 }
 
 const Badge = ({
@@ -15,10 +16,11 @@ const Badge = ({
   children,
   size = "sm",
   className,
+  as = "span",
 }: BadgeProps) => {
   return (
     <Typography
-      as="span"
+      as={as}
       variant="xs/medium"
       className={cn(
         "whitespace-nowrap rounded-md dark:opacity-90",
@@ -33,7 +35,7 @@ const Badge = ({
           "bg-red-100 text-red-800 dark:bg-red-200/80": color === "red",
           "bg-primary-100/60 text-primary-500 dark:bg-primary-100/80":
             color === "blue",
-          "bg-gray-100/90 text-gray-800": color === "gray",
+          "bg-gray-100/90 text-gray-800 dark:bg-accent-hover/60 dark:text-foreground": color === "gray",
           "bg-white text-gray-800": color === "white",
           "border-gray-800/30 bg-gray-200 text-gray-500": color === "dark-gray",
         },
