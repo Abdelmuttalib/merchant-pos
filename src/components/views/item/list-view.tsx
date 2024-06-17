@@ -88,7 +88,7 @@ export function ListView({
                   {item?.images?.length > 0 ? (
                     <Image
                       // src="https://images.unsplash.com/photo-1606963060045-1e3eaa0e6eac?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                      src={item.images?.[0]}
+                      src={item.images?.[0] ?? ""}
                       alt="Product image"
                       className="aspect-square rounded-md object-cover"
                       height="40"
