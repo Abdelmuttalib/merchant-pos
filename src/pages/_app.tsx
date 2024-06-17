@@ -1,5 +1,6 @@
 // import { GeistSans } from "geist/font/sans";
 import { type AppType } from "next/app";
+import { Analytics } from "@vercel/analytics/react";
 import { ThemeProvider } from "next-themes";
 
 import { api } from "@/utils/api";
@@ -10,6 +11,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { Toaster } from "sonner";
 import TailwindBreakpointIndicator from "@/components/breakpoint-indicator";
+import { env } from "@/env";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +28,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
           {/* <main className={GeistSans.className}> */}
           <main className="font-sans">
             <Component {...pageProps} />
+            <Analytics mode={env.NEXT_PUBLIC_NODE_ENV} />
           </main>
           <TailwindBreakpointIndicator />
         </ThemeProvider>
