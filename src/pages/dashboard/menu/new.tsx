@@ -48,6 +48,10 @@ import { getDownloadURL, uploadBytes } from "firebase/storage";
 import { toast } from "sonner";
 import { useRouter } from "next/router";
 
+
+const MAX_IMAGES_UPLOAD_LIMIT = 3;
+const IMAGE_PLACEHOLDER_URL = "https://www.svgrepo.com/show/508699/landscape-placeholder.svg";
+
 export default function CreateNewProductPage({
   categories,
 }: {
@@ -144,7 +148,7 @@ export default function CreateNewProductPage({
                   <ButtonLink href="/dashboard/menu" variant="outline">
                     Discard
                   </ButtonLink>
-                  <Button type="submit">Save Product</Button>
+                  <Button type="submit">Save Item</Button>
                 </div>
               </div>
               <div className="grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8">
@@ -284,7 +288,7 @@ export default function CreateNewProductPage({
                                 {categories.map((category) => (
                                   <SelectItem
                                     key={category.id}
-                                    value={category.id}
+                                    value={category.name}
                                   >
                                     <Badge
                                       color='blue'
@@ -509,7 +513,7 @@ export default function CreateNewProductPage({
                         {
                           "col-span-2 row-span-1": previews.length === 0,
                           "col-span-1": previews.length !== 0,
-                          hidden: previews.length === 5,
+                          hidden: previews.length === MAX_IMAGES_UPLOAD_LIMIT,
                         },
                       )}
                     >
@@ -527,42 +531,12 @@ export default function CreateNewProductPage({
                       <input
                         type="file"
                         multiple
-                        disabled={previews.length === 5}
+                        disabled={previews.length === MAX_IMAGES_UPLOAD_LIMIT}
                         accept="image/png, image/jpg, image/jpeg"
                         onChange={handleFileChange}
-                        // onChange={(e) => {
-                        //   console.log(e.target.files, typeof e.target.files);
-                        //   const a = Array.from(e.target.files);
-                        //   console.log(a);
-                        //   setPreviews((prev) => [
-                        //     ...prev,
-                        //     ...a.map((file) => URL.createObjectURL(file)),
-                        //   ]);
-
-                        // }}
                         className="hidden"
                       />
                     </label>
-                    {/* <div className="grid grid-cols-3 gap-2">
-                      <button>
-                        <Image
-                          src="https://images.unsplash.com/photo-1606963060045-1e3eaa0e6eac?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                          alt="Product image"
-                          className="aspect-square w-full rounded-md object-cover"
-                          height="84"
-                          width="84"
-                        />
-                      </button>
-                      <button>
-                        <Image
-                          src="https://images.unsplash.com/photo-1606963060045-1e3eaa0e6eac?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                          alt="Product image"
-                          className="aspect-square w-full rounded-md object-cover"
-                          height="84"
-                          width="84"
-                        />
-                      </button>
-                    </div> */}
                   </div>
                 </div>
               </div>

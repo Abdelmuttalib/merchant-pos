@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 interface BadgeProps extends React.BaseHTMLAttributes<HTMLSpanElement> {
   color?: string;
   children: React.ReactNode;
-  size?: "default" | "sm";
+  size?: "default" | "sm" | "lg";
   variant?: "default" | "outline" | "secondary" | "bordered";
   as?: React.ElementType;
 }
@@ -27,6 +27,7 @@ const Badge = ({
         {
           "px-3 py-1.5": size === "default",
           "px-2 py-1": size === "sm",
+          "px-3.5 py-2": size === "lg",
         },
         {
           "bg-green-100 text-green-800 dark:bg-green-100/80": color === "green",

@@ -32,7 +32,7 @@ export const siteConfig = {
     },
     {
       href: "/dashboard/menu",
-      label: "Products",
+      label: "Menu",
       icon: <Package className="h-5 w-5" />,
     },
     {

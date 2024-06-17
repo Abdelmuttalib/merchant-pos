@@ -255,13 +255,13 @@ function DashboardHeader({ pageTitle }: { pageTitle: string }) {
             <h1 className="text-2xl font-medium">{pageTitle}</h1>
           </div>
           <div className="space-x-1">
-            <IconButton
+            {/* <IconButton
               size="xs"
               variant="ghost"
               className="text-foreground-muted"
             >
               <Search className="w-5" />
-            </IconButton>
+            </IconButton> */}
             {/* notifications */}
             <NotificationsDialog />
             <NewItemFormDialog />

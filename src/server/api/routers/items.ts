@@ -25,6 +25,7 @@ export const itemsRouter = createTRPCRouter({
     .input(
       z.object({
         item: z.object({
+          images: z.array(z.string()),
           name: z.string(),
           description: z.string(),
           category: z.string(),
@@ -33,7 +34,9 @@ export const itemsRouter = createTRPCRouter({
           cost: z.number(),
           // sales: z.number(),
           stock: z.number(),
-          options: z.record(z.any()),
+          // options is array of objects, each object has 'name' 'price' 'cost' 'stock'
+          options: z.array(z.record(z.any())),
+          // options: z.record(z.any()),
         }),
       }),
     )

@@ -15,7 +15,7 @@ type Option = {
 
 export type Item = {
   id: string;
-  image: string;
+  images: string[];
   name: string;
   category: string;
   price: number;

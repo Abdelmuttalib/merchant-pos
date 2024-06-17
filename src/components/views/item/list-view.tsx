@@ -84,13 +84,26 @@ export function ListView({
           ? data.map((item) => (
               <TableRow key={`${item.name}${item.createdAt}`}>
                 <TableCell className="hidden sm:table-cell">
-                  <Image
-                    src="https://images.unsplash.com/photo-1606963060045-1e3eaa0e6eac?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                    alt="Product image"
-                    className="aspect-square rounded-md object-cover"
-                    height="40"
-                    width="40"
-                  />
+                  {/* const IMAGE_PLACEHOLDER_URL = "https://www.svgrepo.com/show/508699/landscape-placeholder.svg"; */}
+                  {item?.images?.length > 0 ? (
+                    <Image
+                      // src="https://images.unsplash.com/photo-1606963060045-1e3eaa0e6eac?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                      src={item.images?.[0]}
+                      alt="Product image"
+                      className="aspect-square rounded-md object-cover"
+                      height="40"
+                      width="40"
+                    />
+                  ) : (
+                    <Image
+                      // src="https://images.unsplash.com/photo-1606963060045-1e3eaa0e6eac?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                      src="https://www.svgrepo.com/show/508699/landscape-placeholder.svg"
+                      alt="Product image"
+                      className="aspect-square rounded-md object-cover"
+                      height="40"
+                      width="40"
+                    />
+                  )}
                 </TableCell>
                 <TableCell className="font-medium">{item.name}</TableCell>
                 <TableCell className="hidden md:table-cell">

@@ -29,7 +29,7 @@ export default function ItemsView() {
   return (
     <div>
       <div className="flex w-full flex-col">
-        <div className="flex w-full flex-col-reverse items-center justify-between gap-x-6 gap-y-3 pb-[7px] sm:-ml-3 sm:flex-row sm:gap-y-0 sm:border-b">
+        <div className="flex w-full flex-col-reverse items-center justify-between gap-x-6 gap-y-3 pb-[7px] sm:-ml-3 sm:flex-row sm:gap-y-0">
           {/* search */}
           <div className="relative ml-auto w-full flex-1">
             <Search className="absolute left-4 top-3 h-5 w-5 text-muted-foreground" />
@@ -84,7 +84,7 @@ export default function ItemsView() {
               />
             )}
             <div className="text-xs text-foreground-muted">
-              <strong>{filteredItems?.length}</strong> products
+              <strong>{filteredItems?.length}</strong> items
             </div>
           </main>
         </div>
