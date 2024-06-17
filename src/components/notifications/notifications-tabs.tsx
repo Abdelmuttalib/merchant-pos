@@ -19,7 +19,8 @@ function generateFakeNotifications(count: number) {
   for (let i = 1; i <= count; i++) {
     const id = `${i}`;
     const type = types[Math.floor(Math.random() * types.length)]!;
-    const date = randomDate(new Date(2023, 0, 1), new Date());
+    // ts hack to convert type with unknown type
+    const date = randomDate(new Date(2023, 0, 1), new Date()) as unknown as string;
     const isRead = Math.random() < 0.5; // Randomly set isRead to true or false
     const description = `This is notification ${i}`;
 
