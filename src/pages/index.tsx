@@ -50,7 +50,7 @@ export default function Home() {
         />
         {/* content */}
         <div className="absolute inset-0 flex h-full w-full items-end justify-end bg-transparent">
-          <div className="h-[50%] w-full bg-gradient-to-t from-gray-900 to-transparent">
+          <div className="h-[42%] w-full bg-gradient-to-t from-gray-900 to-transparent">
             <div className="flex flex-col gap-y-10 px-20 text-white">
               <div className="flex w-full items-end justify-between text-balance text-6xl font-semibold tracking-tight">
                 <h1 className="max-w-3xl">
