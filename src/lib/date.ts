@@ -11,7 +11,7 @@
 //   minute: 'numeric',
 // };
 
-export const formatDate = (date: Date | string) => {
+export const formatDate = (date: string) => {
   const newDate = new Date(date);
   return newDate.toLocaleDateString("en-us", {
     year: "numeric",
@@ -22,7 +22,7 @@ export const formatDate = (date: Date | string) => {
   });
 };
 
-export const formatShortDate = (date: Date | string) => {
+export const formatShortDate = (date: string) => {
   const newDate = new Date(date);
   return newDate.toLocaleDateString("en-us", {
     month: "short",
@@ -30,7 +30,7 @@ export const formatShortDate = (date: Date | string) => {
   });
 };
 
-export const formatShortDateWithYear = (date: Date | string) => {
+export const formatShortDateWithYear = (date: string) => {
   const newDate = new Date(date);
   return newDate.toLocaleDateString("en-us", {
     month: "short",

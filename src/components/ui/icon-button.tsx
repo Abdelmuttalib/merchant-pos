@@ -4,7 +4,7 @@ import Link, { type LinkProps } from "next/link";
 import React from "react";
 
 const iconButtonVariants = cva(
-  "cursor-pointer border-0 border-transparent ring-1 ring-inset ring-transparent transition duration-150 ease-linear outline-transparent focus:outline-transparent whitespace-nowrap rounded-md inline-flex items-center justify-center focus:ring-2 focus:ring-inset",
+  "cursor-pointer border-0 flex-shrink-0 border-transparent ring-1 ring-inset ring-transparent transition duration-150 ease-linear outline-transparent focus:outline-transparent whitespace-nowrap rounded-md inline-flex items-center justify-center focus:ring-2 focus:ring-inset",
   {
     variants: {
       variant: {

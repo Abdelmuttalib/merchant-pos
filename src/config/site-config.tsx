@@ -1,4 +1,5 @@
 import { HomeIcon, SettingsIcon, StoreIcon } from "@/components/icons";
+import { Package } from "lucide-react";
 
 export const siteConfig = {
   name: "UTAK POS",
@@ -32,7 +33,7 @@ export const siteConfig = {
     {
       href: "/dashboard/menu",
       label: "Products",
-      icon: <StoreIcon />,
+      icon: <Package className="h-5 w-5" />,
     },
     {
       href: "/dashboard/settings/general",

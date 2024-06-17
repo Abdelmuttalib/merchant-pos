@@ -17,7 +17,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { IconButton, IconLink } from "@/components/ui/icon-button";
 import Typography from "@/components/ui/typography";
-import { getProductStatusBadgeColor } from "@/utils/badge";
+import { getItemStatusBadgeColor } from "@/utils/badge";
 
 import {
   Form,
@@ -37,20 +37,23 @@ import {
 } from "@/components/views/item/item-form";
 import { useItems } from "@/hooks/use-items";
 import { type GetServerSideProps } from "next";
-import { get, ref } from "firebase/database";
-import { db } from "@/server/db";
-import { firebaseObjectValToArray } from "@/lib/db";
-import type { Category } from "@/lib/types";
+import { ref } from "firebase/storage";
+import { storage } from "@/server/db";
+import { ItemStatusEnum, type Category } from "@/lib/types";
 import { getCategories } from "@/lib/categories";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { getDownloadURL, uploadBytes } from "firebase/storage";
+import { toast } from "sonner";
+import { useRouter } from "next/router";
 
 export default function CreateNewProductPage({
   categories,
 }: {
   categories: Category[];
 }) {
+  const router = useRouter();
   const { onCreateItem } = useItems();
 
   // 1. Define your form.
@@ -68,37 +71,53 @@ export default function CreateNewProductPage({
     name: "options",
   });
 
-  // 2. Define a submit handler.
-  function onSubmit(values: NewItemFormValuesSchema) {
-    // onCreateItem({ ...values, options: {} });
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-  }
-
   const [files, setFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
 
-  const handleFileChange = (e) => {
-    const selectedFiles = Array.from(e.target.files);
-    setFiles(selectedFiles);
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = Array.from(e.target.files ?? []);
+    setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
 
-    console.log(e.target.files, selectedFiles);
-
-    const previewUrls = selectedFiles.map((file) => URL.createObjectURL(file));
-    setPreviews(previewUrls);
-
-    selectedFiles.forEach((file) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviews((prev) => [...prev, reader.result]);
-      };
-      reader.readAsDataURL(file);
-    });
+    const newPreviews = selectedFiles.map((file) => URL.createObjectURL(file));
+    setPreviews((prevPreviews) => [...prevPreviews, ...newPreviews]);
   };
 
+  async function uploadFile(file: File) {
+    const storageRef = ref(storage, `images/${file.name}`);
+    await uploadBytes(storageRef, file);
+    return getDownloadURL(storageRef);
+  }
+
+  const uploadImages = async (files: File[]): Promise<string[]> => {
+    const uploadPromises = files.map((file) => uploadFile(file));
+    return Promise.all(uploadPromises);
+  };
+
+  // 2. Define a submit handler.
+  function onSubmit(values: NewItemFormValuesSchema) {
+    console.log(values);
+    if (files.length > 0) {
+      uploadImages(files)
+        .then((urls) => {
+          // console.log(urls);
+          onCreateItem({ ...values, images: urls });
+        })
+        .catch(() => {
+          toast.error("Failed to upload images");
+        });
+    } else {
+      onCreateItem({ ...values, images: [] });
+    }
+  }
+
+  function onRemoveImage(imageIndex: number) {
+    setFiles((prev) => prev.filter((_, i) => i !== imageIndex));
+    setPreviews((prev) => prev.filter((_, i) => i !== imageIndex));
+  }
+
+
   return (
-    <DashboardLayout pageTitle="New Product">
+    <DashboardLayout pageTitle="New Item">
       <div className="flex flex-col pb-44 sm:gap-4">
         <main className="grid flex-1 items-start gap-4 md:gap-8">
           <Form {...form}>
@@ -118,9 +137,9 @@ export default function CreateNewProductPage({
                 <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
                   Item Details
                 </h1>
-                <Badge variant="outline" className="ml-auto sm:ml-0">
+                {/* <Badge variant="outline" className="ml-auto sm:ml-0">
                   In stock
-                </Badge>
+                </Badge> */}
                 <div className="hidden items-center gap-2 md:ml-auto md:flex">
                   <ButtonLink href="/dashboard/menu" variant="outline">
                     Discard
@@ -268,9 +287,7 @@ export default function CreateNewProductPage({
                                     value={category.id}
                                   >
                                     <Badge
-                                      color={getProductStatusBadgeColor(
-                                        category.name,
-                                      )}
+                                      color='blue'
                                       className="capitalize"
                                     >
                                       {category.name}
@@ -306,15 +323,10 @@ export default function CreateNewProductPage({
                               </FormControl>
 
                               <SelectContent>
-                                {[
-                                  "draft",
-                                  "active",
-                                  "archived",
-                                  "inactive",
-                                ].map((status) => (
+                                {Object.values(ItemStatusEnum).map((status) => (
                                   <SelectItem key={status} value={status}>
                                     <Badge
-                                      color={getProductStatusBadgeColor(status)}
+                                      color={getItemStatusBadgeColor(status)}
                                       className="capitalize"
                                     >
                                       {status}
@@ -451,16 +463,8 @@ export default function CreateNewProductPage({
                   {/* accept only images */}
                   <div className="grid grid-cols-2 gap-2">
                     {previews.map((preview, index) => (
-                      <div key={`${preview}${index}`} className={cn(
-                        "relative aspect-video w-full rounded-md object-cover",
-                        {
-                          "col-span-2": index === 0,
-                          "col-span-1": index !== 0,
-                        },
-                      )}>
-                      <Image
-                        src={preview}
-                        alt={`Preview ${index}`}
+                      <div
+                        key={`${preview}${index}`}
                         className={cn(
                           "relative aspect-video w-full rounded-md object-cover",
                           {
@@ -468,18 +472,28 @@ export default function CreateNewProductPage({
                             "col-span-1": index !== 0,
                           },
                         )}
-                        width={index === 0 ? 300 : 84}
-                        height={index === 0 ? 300 : 84}
-                      />
-                      <IconButton variant='destructive' onClick={() => {
-                        setPreviews((prev) => prev.filter((_, i) => i !== index));
-                        // setFiles((prev) => prev.filter((_, i) => i !== index));
-                      }}
-                      className="absolute top-1.5 right-1.5"
-                      size='xs'
                       >
-                        <Trash className="w-[18px]" />
-                      </IconButton>
+                        <Image
+                          src={preview}
+                          alt={`Preview ${index}`}
+                          className={cn(
+                            "relative aspect-video w-full rounded-md object-cover",
+                            {
+                              "col-span-2": index === 0,
+                              "col-span-1": index !== 0,
+                            },
+                          )}
+                          width={index === 0 ? 300 : 84}
+                          height={index === 0 ? 300 : 84}
+                        />
+                        <IconButton
+                          variant="destructive"
+                          onClick={() => onRemoveImage(index)}
+                          className="absolute right-1.5 top-1.5"
+                          size="xs"
+                        >
+                          <Trash className="w-[18px]" />
+                        </IconButton>
                       </div>
                     ))}
                     {/* <Image
@@ -491,11 +505,11 @@ export default function CreateNewProductPage({
                     /> */}
                     <label
                       className={cn(
-                        "group flex flex-col aspect-square h-full gap-y-2 w-full cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-foreground-muted-dark",
+                        "group flex aspect-square h-full w-full cursor-pointer flex-col items-center justify-center gap-y-2 rounded-md border-2 border-dashed border-foreground-muted-dark",
                         {
                           "col-span-2 row-span-1": previews.length === 0,
                           "col-span-1": previews.length !== 0,
-                          "hidden": previews.length === 5,
+                          hidden: previews.length === 5,
                         },
                       )}
                     >
@@ -505,7 +519,7 @@ export default function CreateNewProductPage({
                           Click to upload
                         </span>
                       </p> */}
-                      <p className="text-foreground-lighter text-xs text-center max-w-24">
+                      <p className="max-w-24 text-center text-xs text-foreground-lighter">
                         PNG, JPG, JPEG or WEBP
                         {/* (MAX. 800x400px) */}
                       </p>
@@ -515,39 +529,17 @@ export default function CreateNewProductPage({
                         multiple
                         disabled={previews.length === 5}
                         accept="image/png, image/jpg, image/jpeg"
-                        // onChange={handleFileChange}
-                        onChange={(e) => {
-                          // handle when there is a file selected, and it's not empty, so just append the new file
-                          console.log(e.target.files, typeof e.target.files);
-                          const a = Array.from(e.target.files);
-                          console.log(a);
-                          // setFiles((prev) => [...prev, ...a]);
-                          setPreviews((prev) => [
-                            ...prev,
-                            ...a.map((file) => URL.createObjectURL(file)),
-                          ]);
-                          // const d = Object.entries(e.target.files).map(([key, value]) => value);
-                          // console.log(d);
-                          // if (e?.target?.files?.length) {
-                          //   e?.target?.files?.forEach((file) => {
-                          //     setFiles((prev) => [...prev, file]);
-                          //     const imagePreviewUrl = URL.createObjectURL(
-                          //       file,
-                          //     );
-                          //     setPreviews((p) => [...p, imagePreviewUrl]);
-                          //   });
-                            
-                          // }
-                          // if (e?.target?.files?.length && e.target.files[0]) {
-                          //   const imagePreviewUrl = URL.createObjectURL(
-                          //     e.target.files[0],
-                          //   );
-                          //   setPreviews(p => [...p, imagePreviewUrl]);
-                          // }
-                        }}
-                        // onChange(
-                        //   e?.target?.files?.length ? e.target.files[0] : null
-                        // );
+                        onChange={handleFileChange}
+                        // onChange={(e) => {
+                        //   console.log(e.target.files, typeof e.target.files);
+                        //   const a = Array.from(e.target.files);
+                        //   console.log(a);
+                        //   setPreviews((prev) => [
+                        //     ...prev,
+                        //     ...a.map((file) => URL.createObjectURL(file)),
+                        //   ]);
+
+                        // }}
                         className="hidden"
                       />
                     </label>

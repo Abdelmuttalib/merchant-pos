@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { IconButton, IconLink } from "@/components/ui/icon-button";
 import Typography from "@/components/ui/typography";
-import { getProductStatusBadgeColor } from "@/utils/badge";
+import { getItemStatusBadgeColor } from "@/utils/badge";
 
 import {
   Form,

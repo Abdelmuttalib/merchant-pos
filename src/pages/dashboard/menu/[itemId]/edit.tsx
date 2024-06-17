@@ -29,7 +29,7 @@ import { getCategories } from "@/lib/categories";
 import type { Category, Item } from "@/lib/types";
 import { db } from "@/server/db";
 import { api } from "@/utils/api";
-import { getProductStatusBadgeColor } from "@/utils/badge";
+import { getItemStatusBadgeColor } from "@/utils/badge";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { get, ref } from "firebase/database";
 import { ChevronLeft, Upload } from "lucide-react";
@@ -295,7 +295,7 @@ export default function EditItemPage({
                                 ].map((status) => (
                                   <SelectItem key={status} value={status}>
                                     <Badge
-                                      color={getProductStatusBadgeColor(status)}
+                                      color={getItemStatusBadgeColor(status)}
                                       className="capitalize"
                                     >
                                       {status}

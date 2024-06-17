@@ -13,8 +13,8 @@ export const itemsRouter = createTRPCRouter({
     const snapshot = await get(menuItemsRef);
 
     if (snapshot.exists()) {
-      const data: Item[] = snapshot.val();
-      const items = firebaseObjectValToArray(data);
+      const data = snapshot.val();
+      const items: Item[] = firebaseObjectValToArray(data);
       return items;
     } else {
       return { message: "No data available" };

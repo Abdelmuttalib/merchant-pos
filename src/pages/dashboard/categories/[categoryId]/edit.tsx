@@ -12,28 +12,14 @@ import {
 } from "@/components/ui/form";
 import { IconLink } from "@/components/ui/icon-button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import Typography from "@/components/ui/typography";
-import {
-  NewItemFormValuesSchema,
-  newItemformSchema,
-} from "@/components/views/item/item-form";
-import { Item } from "@/lib/types";
+import type { Category, Item } from "@/lib/types";
 import { db } from "@/server/db";
 import { api } from "@/utils/api";
-import { getProductStatusBadgeColor } from "@/utils/badge";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { get, push, ref } from "firebase/database";
-import { ChevronLeft, Upload } from "lucide-react";
+import { get,  ref } from "firebase/database";
+import { ChevronLeft } from "lucide-react";
 import { type GetServerSideProps } from "next";
-import Image from "next/image";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -51,13 +37,11 @@ export default function EditItemPage({
   data,
 }: {
   categoryId: string;
-  data: any;
+  data: Category;
 }) {
-
   const router = useRouter();
 
-
-  const itemData = api.menu.items.getItemById.useQuery({ id: categoryId });
+  const categoryData = api.menu.items.getItemById.useQuery({ id: categoryId });
 
   const form = useForm<NewCategoryFormValuesSchema>({
     resolver: zodResolver(newCategoryformSchema),
@@ -78,7 +62,11 @@ export default function EditItemPage({
     },
   );
 
-  function onUpdateCategory(data: { id: string, name: string; description?: string | undefined }) {
+  function onUpdateCategory(data: {
+    id: string;
+    name: string;
+    description?: string | undefined;
+  }) {
     updateCategoryMutation.mutate(data);
   }
 
@@ -91,7 +79,7 @@ export default function EditItemPage({
   }
 
   return (
-    <DashboardLayout pageTitle="Edit Item">
+    <DashboardLayout pageTitle="Edit Category">
       <div className="flex flex-col sm:gap-4">
         <main className="grid flex-1 items-start gap-4 md:gap-8">
           <Form {...form}>
@@ -109,7 +97,7 @@ export default function EditItemPage({
                   <span className="sr-only">Back</span>
                 </IconLink>
                 <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
-                  Item Details
+                  Category Details
                 </h1>
                 <div className="hidden items-center gap-2 md:ml-auto md:flex">
                   <ButtonLink href="/dashboard/categories" variant="outline">
@@ -128,12 +116,8 @@ export default function EditItemPage({
                         <FormItem>
                           <FormLabel>Name</FormLabel>
                           <FormControl>
-                            <Input placeholder="item name" {...field} />
+                            <Input placeholder="category name" {...field} />
                           </FormControl>
-                          <FormDescription>
-                            {/* description for field */}
-                            Give your item a short and clear name.
-                          </FormDescription>
                           {/* <FormMessage /> */}
                         </FormItem>
                       )}
@@ -148,12 +132,13 @@ export default function EditItemPage({
                             <Textarea
                               id="description"
                               className="min-h-32"
+                              placeholder="category description"
                               {...field}
                             />
                           </FormControl>
                           <FormDescription>
                             {/* description for field */}
-                            Describe your item.
+                            Describe the category and what it includes. 
                           </FormDescription>
                           {/* <FormMessage /> */}
                         </FormItem>
@@ -188,7 +173,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     };
   }
 
-  async function getCategories() {
+  async function getCategoryData() {
     const menuItemsRef = ref(db, `categories/${categoryId}`);
     const snapshot = await get(menuItemsRef);
 
@@ -201,7 +186,16 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     }
   }
 
-  const data = await getCategories();
+  const data = await getCategoryData();
+
+  if (!data) {
+    return {
+      redirect: {
+        destination: "/dashboard/categories",
+        permanent: false,
+      },
+    };
+  }
 
   return {
     props: {

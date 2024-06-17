@@ -27,7 +27,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Plus, Upload } from "lucide-react";
 import Image from "next/image";
-import { getProductStatusBadgeColor } from "@/utils/badge";
+import { getItemStatusBadgeColor } from "@/utils/badge";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import Typography from "@/components/ui/typography";
@@ -54,6 +54,8 @@ export const itemOptionSchema = z.object({
 });
 
 export const newItemformSchema = z.object({
+  images: z.array(z.string().url()).optional(),
+  // images => .nonempty({ message: "At least one image is required" })
   name: z.string().min(1),
   description: z.string().min(1),
   // price: z.preprocess(
@@ -125,7 +127,7 @@ export function NewItemFormDialog() {
       <CustomDialog
         open={isOpen}
         onClose={onDiscard}
-        title="Add Product"
+        title="Add Item"
         // className='px-0'
         fullScreen
         triggerButton={
@@ -139,14 +141,14 @@ export function NewItemFormDialog() {
           </IconButton>
         }
       >
-        <div className="-mx-6 flex flex-col border-b py-7 pb-[27px]">
+        <div className="-mx-6 flex flex-col py-4 pb-[27px]">
           <div className="px-6">
             <Typography
               as="p"
               variant="sm/regular"
               className="text-foreground-lighter"
             >
-              Add a new product to your store
+              Add a new item to your store
             </Typography>
           </div>
         </div>
@@ -344,7 +346,7 @@ export function NewItemFormDialog() {
                                 ].map((status) => (
                                   <SelectItem key={status} value={status}>
                                     <Badge
-                                      color={getProductStatusBadgeColor(status)}
+                                      color={getItemStatusBadgeColor(status)}
                                       className="capitalize"
                                     >
                                       {status}

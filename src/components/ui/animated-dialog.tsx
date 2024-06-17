@@ -134,7 +134,7 @@ const DialogContent = React.forwardRef<
   <Dialog.Panel
     ref={ref}
     className={cn(
-      'w-full max-w-md transform overflow-hidden rounded-2xl bg-background p-6 text-left align-middle shadow-xl transition-all',
+      'w-full max-w-md transform overflow-hidden rounded-2xl bg-background p-4 lg:p-6 text-left align-middle shadow-xl transition-all',
       {
         'absolute right-0 left-0 max-w-full bottom-0 h-[70%] w-full overflow-y-scroll rounded-b-none rounded-t-md pt-5 shadow-xl dark:text-gray-200 sm:left-auto sm:top-0 sm:right-0 sm:rounded-r-none sm:min-h-screen sm:max-w-sm sm:rounded-md md:max-w-md lg:max-w-lg':
           fullScreen,

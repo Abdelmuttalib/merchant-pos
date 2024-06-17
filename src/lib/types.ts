@@ -6,15 +6,25 @@
 //     createdAt: "2024-06-01 07:15 PM",
 //   },
 
+type Option = {
+  name: string;
+  price: number;
+  cost: number;
+  stock: number;
+}
+
 export type Item = {
+  id: string;
   image: string;
   name: string;
   category: string;
   price: number;
   cost: number;
+  status: ItemStatusEnum;
   sales: number;
   stock: number;
-  options: Record<string, any>;
+  options: Record<string, Option>;
+  createdAt: string;
 };
 
 export type Category = {
@@ -24,4 +34,15 @@ export type Category = {
   createdAt: string;
 }
 
-export type ViewType = "list" | "grid";
+export enum ViewTypeEnum {
+  GRID = "grid",
+  LIST = "list",
+  // TABLE = "table",
+}
+
+export enum ItemStatusEnum {
+  DRAFT = "draft",
+  ARCHIVED = "archived",
+  ACTIVE = "active",
+  INACTIVE = "inactive",
+}

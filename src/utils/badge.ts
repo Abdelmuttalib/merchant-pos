@@ -1,12 +1,14 @@
-export function getProductStatusBadgeColor(category: string) {
-  switch (category.toLowerCase()) {
-    case "active":
+import { ItemStatusEnum } from "@/lib/types";
+
+export function getItemStatusBadgeColor(status: ItemStatusEnum) {
+  switch (status) {
+    case ItemStatusEnum.ACTIVE:
       return "green";
-    case "draft":
+    case ItemStatusEnum.DRAFT:
       return "gray";
-    case "inactive":
+    case ItemStatusEnum.INACTIVE:
       return "yellow";
-    case "archived":
+    case ItemStatusEnum.ARCHIVED:
       return "dark-gray";
     default:
       return "blue";
