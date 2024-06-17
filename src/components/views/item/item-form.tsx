@@ -36,6 +36,7 @@ import { useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useItems } from "@/hooks/use-items";
+import { ItemStatusEnum } from "@/lib/types";
 
 export const itemOptionSchema = z.object({
   name: z.string().min(1, "Option name is required"),
@@ -110,7 +111,7 @@ export function NewItemFormDialog() {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: SubmitHandler<NewItemFormValuesSchema>) {
+  function onSubmit(values: NewItemFormValuesSchema) {
     // Do something with the form values.
     onCreateItem({ ...values, options: {} });
     form.reset();
@@ -155,6 +156,8 @@ export function NewItemFormDialog() {
         {/* form */}
         <Form {...form}>
           <form
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             onSubmit={form.handleSubmit(onSubmit)}
             className="flex flex-col py-5"
           >
@@ -338,12 +341,7 @@ export function NewItemFormDialog() {
                               </FormControl>
 
                               <SelectContent>
-                                {[
-                                  "draft",
-                                  "active",
-                                  "archived",
-                                  "inactive",
-                                ].map((status) => (
+                                {Object.values(ItemStatusEnum).map((status) => (
                                   <SelectItem key={status} value={status}>
                                     <Badge
                                       color={getItemStatusBadgeColor(status)}
