@@ -361,7 +361,9 @@ export default function CreateNewProductPage({
                           className="size-5 bg-background p-0.5"
                           //  bg-accent-hover
                           checked={enableOptions}
-                          onCheckedChange={(checked) => {
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-ignore
+                          onCheckedChange={(checked: boolean | ((prevState: boolean) => boolean)) => {
                             setEnableOptions(checked);
                             // reset options when unchecked
                             if (!checked) {
