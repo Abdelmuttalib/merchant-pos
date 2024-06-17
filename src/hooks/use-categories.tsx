@@ -18,7 +18,7 @@ export function useCategories() {
     },
   });
 
-  function onCreateCategory(data: {name: string, description: string}) {
+  function onCreateCategory(data: {name: string, description?: string}) {
     createCategory.mutate(data);
   };
 

@@ -1,16 +1,11 @@
 import DashboardLayout from "@/components/layout/dashboard-layout";
 
-import {
-  ChevronLeft,
-
-} from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { IconButton, IconLink } from "@/components/ui/icon-button";
-import Typography from "@/components/ui/typography";
-import { getItemStatusBadgeColor } from "@/utils/badge";
+import { IconLink } from "@/components/ui/icon-button";
 
 import {
   Form,
@@ -24,36 +19,30 @@ import {
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { type NewCategoryFormValuesSchema, newCategoryformSchema } from "./[categoryId]/edit";
+import {
+  type NewCategoryFormValuesSchema,
+  newCategoryformSchema,
+} from "./[categoryId]/edit";
 import { useRouter } from "next/router";
 import { useCategories } from "@/hooks/use-categories";
 
-
-
 export default function CreateNewCategoryPage() {
-
   const router = useRouter();
 
   const { onCreateCategory } = useCategories();
 
-  // 1. Define your form.
   const form = useForm<NewCategoryFormValuesSchema>({
     resolver: zodResolver(newCategoryformSchema),
   });
 
-  // 2. Define a submit handler.
   function onSubmit(values: NewCategoryFormValuesSchema) {
     onCreateCategory(values);
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
   }
 
-
-  async function onDiscard(){
+  async function onDiscard() {
     form.reset();
-    await router.push('/dashboard/categories');
-  };
+    await router.push("/dashboard/categories");
+  }
 
   return (
     <DashboardLayout pageTitle="New Category">
@@ -65,7 +54,11 @@ export default function CreateNewCategoryPage() {
               className="mx-auto grid w-full flex-1 auto-rows-max gap-4"
             >
               <div className="flex items-center gap-4">
-                <IconLink href="/dashboard/categories" variant="outline" className="h-7 w-7">
+                <IconLink
+                  href="/dashboard/categories"
+                  variant="outline"
+                  className="h-7 w-7"
+                >
                   <ChevronLeft className="h-4 w-4" />
                   <span className="sr-only">Back</span>
                 </IconLink>
@@ -73,7 +66,9 @@ export default function CreateNewCategoryPage() {
                   Category Details
                 </h1>
                 <div className="hidden items-center gap-2 md:ml-auto md:flex">
-                  <ButtonLink href="/dashboard/categories" variant="outline">Discard</ButtonLink>
+                  <ButtonLink href="/dashboard/categories" variant="outline">
+                    Discard
+                  </ButtonLink>
                   <Button type="submit">Save Category</Button>
                 </div>
               </div>
@@ -125,7 +120,9 @@ export default function CreateNewCategoryPage() {
                 <Button type="button" variant="outline" onClick={onDiscard}>
                   Discard
                 </Button>
-                <Button type="submit" className="flex-1">Save Product</Button>
+                <Button type="submit" className="flex-1">
+                  Save Product
+                </Button>
               </div>
             </form>
           </Form>
