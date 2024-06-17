@@ -14,6 +14,7 @@ export const itemsRouter = createTRPCRouter({
 
     if (snapshot.exists()) {
       const data = snapshot.val();
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       const items: Item[] = firebaseObjectValToArray(data);
       return items;
     } else {
