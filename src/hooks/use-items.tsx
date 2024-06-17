@@ -1,17 +1,7 @@
+import { NewItemFormValuesSchema } from "@/components/views/item/item-form";
 import { api } from "@/utils/api";
 import { toast } from "sonner";
 
-const testItem = {
-  image: '',
-  name: 'Test',
-  category: 'Test',
-  price: 49.99,
-  cost: 25.0,
-  sales: 10,
-  stock: 100,
-  options: {
-  },
-}
 
 export function useItems() {
 
@@ -29,7 +19,8 @@ export function useItems() {
     },
   });
 
-  function onCreateItem(data) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function onCreateItem(data: any) {
     createItem.mutate({ item: data });
   };
 
