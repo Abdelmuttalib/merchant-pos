@@ -10,14 +10,7 @@ import { db } from "@/server/db";
 import { api } from "@/utils/api";
 import { getItemStatusBadgeColor } from "@/utils/badge";
 import { get, ref } from "firebase/database";
-import {
-  Check,
-  CheckCircle,
-  CheckCircle2,
-  CheckCircleIcon,
-  ChevronLeft,
-  Pencil,
-} from "lucide-react";
+import { Check, ChevronLeft, Pencil } from "lucide-react";
 import { type GetServerSideProps } from "next";
 import Image from "next/image";
 import { useState } from "react";
@@ -96,13 +89,13 @@ export default function EditItemPage({ itemId }: { itemId: string }) {
                   {itemData.data?.status}
                 </Badge>
               </div>
-                <Typography
-                  as="p"
-                  variant="base/regular"
-                  className="text-foreround-light bg-accent-hover/60 w-fit p-2 px-3 rounded-md"
-                >
-                  {itemData.data?.description}
-                </Typography>
+              <Typography
+                as="p"
+                variant="base/regular"
+                className="text-foreround-light w-fit rounded-md bg-accent-hover/60 p-2 px-3"
+              >
+                {itemData.data?.description}
+              </Typography>
               <div className="space-y-4">
                 <Typography as="p" variant="base/regular">
                   <span className="font-semibold">Options:</span>{" "}
@@ -192,7 +185,6 @@ export default function EditItemPage({ itemId }: { itemId: string }) {
                       stock: 15,
                     },
                   ].map((addOn, index) => {
-
                     const isSelected = selectedAddOns.includes(addOn.name);
 
                     console.log("S", isSelected, selectedAddOns, addOn);
