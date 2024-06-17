@@ -17,6 +17,7 @@ export type Item = {
   id: string;
   images: string[];
   name: string;
+  description: string;
   category: string;
   price: number;
   cost: number;

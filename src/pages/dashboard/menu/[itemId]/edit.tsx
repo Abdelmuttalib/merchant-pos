@@ -26,7 +26,7 @@ import {
   newItemformSchema,
 } from "@/components/views/item/item-form";
 import { getCategories } from "@/lib/categories";
-import type { Category, Item } from "@/lib/types";
+import { ItemStatusEnum, type Category, type Item } from "@/lib/types";
 import { db } from "@/server/db";
 import { api } from "@/utils/api";
 import { getItemStatusBadgeColor } from "@/utils/badge";
@@ -44,7 +44,7 @@ export default function EditItemPage({
   categories,
 }: {
   itemId: string;
-  data: any;
+  data: Item;
   categories: Category[];
 }) {
   const itemData = api.menu.items.getItemById.useQuery({ id: itemId });
@@ -70,7 +70,11 @@ export default function EditItemPage({
     },
   });
 
-  function onUpdateItem(data) {
+  function onUpdateItem(
+    data: NewItemFormValuesSchema & {
+      id: string;
+    },
+  ) {
     updateItemMutation.mutate({ item: data });
   }
 
@@ -78,9 +82,7 @@ export default function EditItemPage({
     onUpdateItem({
       id: itemId,
       ...values,
-      options: {},
     });
-    console.log("values: ", values);
   }
 
   return (
@@ -287,12 +289,7 @@ export default function EditItemPage({
                               </FormControl>
 
                               <SelectContent>
-                                {[
-                                  "draft",
-                                  "active",
-                                  "archived",
-                                  "inactive",
-                                ].map((status) => (
+                                {Object.values(ItemStatusEnum).map((status) => (
                                   <SelectItem key={status} value={status}>
                                     <Badge
                                       color={getItemStatusBadgeColor(status)}

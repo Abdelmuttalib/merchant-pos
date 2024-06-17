@@ -94,7 +94,7 @@ export const itemsRouter = createTRPCRouter({
           cost: z.number(),
           // sales: z.number(),
           stock: z.number(),
-          options: z.record(z.any()),
+          options: z.array(z.record(z.any())).optional(),
         }),
       }),
     )

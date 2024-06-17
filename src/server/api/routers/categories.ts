@@ -13,6 +13,7 @@ export const categoriesRouter = createTRPCRouter({
 
     if (snapshot.exists()) {
       const data = snapshot.val();
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       const categories: Category[] = firebaseObjectValToArray(data);
       return categories;
     } else {
