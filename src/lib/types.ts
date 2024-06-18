@@ -32,7 +32,8 @@ export type Category = {
   id: string;
   name: string;
   description: string;
-  createdAt: string;
+  createdAt: number;
+  updatedAt?: number;
 }
 
 export enum ViewTypeEnum {

@@ -44,6 +44,7 @@ export function useCategories() {
     id: string;
     name: string;
     description?: string | undefined;
+    createdAt: number;
   }) {
     updateCategoryMutation.mutate(data);
   }

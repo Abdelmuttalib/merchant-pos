@@ -22,12 +22,20 @@ import { type GetServerSideProps } from "next";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-export const newCategoryformSchema = z.object({
+// export const newCategoryformSchema = z.object({
+//   name: z.string(),
+//   description: z.string().optional(),
+// });
+
+// export type NewCategoryFormValuesSchema = z.infer<typeof newCategoryformSchema>;
+
+const editCategoryformSchema = z.object({
   name: z.string(),
   description: z.string().optional(),
+  createdAt: z.number(),
 });
 
-export type NewCategoryFormValuesSchema = z.infer<typeof newCategoryformSchema>;
+type EditCategoryFormValuesSchema = z.infer<typeof editCategoryformSchema>;
 
 export default function EditItemPage({
   categoryId,
@@ -40,15 +48,16 @@ export default function EditItemPage({
 
   const categoryData = api.menu.items.getItemById.useQuery({ id: categoryId });
 
-  const form = useForm<NewCategoryFormValuesSchema>({
-    resolver: zodResolver(newCategoryformSchema),
+  const form = useForm<EditCategoryFormValuesSchema>({
+    resolver: zodResolver(editCategoryformSchema),
     defaultValues: {
       name: data?.name,
       description: data?.description,
+      createdAt: data?.createdAt,
     },
   });
 
-  function onSubmit(values: NewCategoryFormValuesSchema) {
+  function onSubmit(values: EditCategoryFormValuesSchema) {
     onUpdateCategory({
       id: categoryId,
       ...values,

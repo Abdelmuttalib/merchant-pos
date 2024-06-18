@@ -68,6 +68,7 @@ export const categoriesRouter = createTRPCRouter({
         id: z.string(),
         name: z.string(),
         description: z.string().optional(),
+        createdAt: z.number(),
       }),
     )
     .mutation(async ({ input }) => {
