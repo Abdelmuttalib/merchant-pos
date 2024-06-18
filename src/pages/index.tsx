@@ -19,7 +19,7 @@ export default function Home() {
       <Seo title="UTAK POS" description="Merchant Restaurant POS" />
       <main className="relative flex h-screen flex-col items-center justify-center bg-gray-800">
         {/* header => nav */}
-        <div className="absolute top-0 z-20 flex h-16 w-full items-center justify-between bg-transparent px-20">
+        <div className="absolute top-0 z-20 flex h-16 w-full items-center justify-between bg-transparent px-4 lg:px-20">
           <div className="flex items-center gap-x-6">
             <h3 className="text-2xl font-bold uppercase tracking-tight text-white">
               UTAK
@@ -33,9 +33,11 @@ export default function Home() {
             </span> */}
           </div>
           <div className="flex items-center gap-x-10 text-sm text-white">
-            {siteConfig.navItems.map((item, i) => (
-              <p key={`${item}${i}`}>{item}</p>
-            ))}
+            <div className="hidden items-center gap-x-10 lg:flex">
+              {siteConfig.navItems.map((item, i) => (
+                <p key={`${item}${i}`}>{item}</p>
+              ))}
+            </div>
             <ButtonLink href={sitePaths.dashboard.home}>Dashboard</ButtonLink>
           </div>
         </div>
@@ -46,13 +48,13 @@ export default function Home() {
           layout="fill"
           objectFit="cover"
           quality={100}
-          className="opacity-60"
+          className="opacity-60 object-right lg:object-none"
         />
         {/* content */}
         <div className="absolute inset-0 flex h-full w-full items-end justify-end bg-transparent">
-          <div className="h-[50%] w-full bg-gradient-to-t from-gray-900 to-transparent">
-            <div className="flex flex-col gap-y-10 px-20 text-white">
-              <div className="flex w-full items-end justify-between text-balance text-6xl font-semibold tracking-tight">
+          <div className="h-[43%] lg:h-[50%] w-full bg-gradient-to-t from-gray-900 to-transparent">
+            <div className="flex flex-col gap-y-10 px-4 text-white lg:px-20">
+              <div className="flex w-full items-end justify-between text-balance text-2xl md:text-4xl font-semibold tracking-tight lg:text-5xl xl:text-6xl">
                 <h1 className="max-w-3xl">
                   Streamlined Point of Sale Solutions for Businesses
                   {/* Innovative security solutions for everyone */}
@@ -67,21 +69,23 @@ export default function Home() {
               </div>
               <hr className="opacity-30" />
               <div>
-                <p className="max-w-3xl text-balance font-light text-gray-200">
+                <p className="max-w-3xl text-balance text-sm font-light text-gray-200 lg:text-base">
                   Elevate your business operations with our intuitive Point of
                   Sale (POS) system. Simplify transactions, manage inventory
                   efficiently, and enhance customer experiences seamlessly.
                   {/* Protect your business with out intelligence-Led security guard solutions. Secure your employees, customers & assets against theft and violence. */}
                 </p>
               </div>
-              <div className="flex h-16 w-full items-center gap-x-2">
-                <ButtonLink href={sitePaths.dashboard.home} variant="primary">
-                  Get Started
-                </ButtonLink>
-                <Button variant="dark" className="h-11">
-                  Book a Demo
-                </Button>
-                <div className="ml-4 flex items-center gap-x-1.5 rounded-lg bg-white/[0.1] px-2.5 py-1.5 backdrop-blur">
+              <div className="flex flex-col lg:flex-row gap-y-4 lg:gap-y-0 h-16 w-full lg:items-center gap-x-2">
+                <div className="flex items-center gap-x-2">
+                  <ButtonLink href={sitePaths.dashboard.home} variant="primary">
+                    Get Started
+                  </ButtonLink>
+                  <Button variant="dark" className="h-11">
+                    Book a Demo
+                  </Button>
+                </div>
+                <div className="lg:ml-4 flex items-center gap-x-1.5 rounded-lg bg-white/[0.1] px-2.5 py-1.5 backdrop-blur">
                   <CheckBadgeIcon className="w-5 text-gray-300" />
                   <p className="whitespace-nowrap text-sm font-normal text-gray-300">
                     Trusted by many businesses
