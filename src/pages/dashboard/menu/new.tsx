@@ -380,8 +380,7 @@ export default function CreateNewProductPage({
                         variant="xs/regular"
                         className="text-foreground-lighter"
                       >
-                        Options allow you to offer multiple variations of a
-                        product, such as different sizes or colors.
+                        options allow you to offer multiple variations of a menu item, such as different sizes or toppings.
                       </Typography>
                     </div>
                     <div>
