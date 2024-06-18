@@ -199,8 +199,6 @@ export default function EditItemPage({ itemId }: { itemId: string }) {
                   ].map((addOn, index) => {
                     const isSelected = selectedAddOns.includes(addOn.name);
 
-                    console.log("S", isSelected, selectedAddOns, addOn);
-
                     return (
                       <div
                         key={index}

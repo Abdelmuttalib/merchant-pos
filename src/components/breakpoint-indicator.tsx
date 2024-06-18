@@ -1,7 +1,6 @@
 import { env } from "@/env";
 
 export default function TailwindBreakpointIndicator() {
-  console.log(env.NEXT_PUBLIC_NODE_ENV);
   if (env.NEXT_PUBLIC_NODE_ENV === "production") return null;
 
   return (

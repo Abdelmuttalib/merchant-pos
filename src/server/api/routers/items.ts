@@ -42,14 +42,11 @@ export const itemsRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input }) => {
-      console.log("input", input);
       const newItemRef = push(ref(db, "menuItems"));
       set(newItemRef, { ...input.item, createdAt: serverTimestamp() })
-        .then(() => {
-          console.log("Item added successfully");
-        })
-        .catch((error) => {
-          console.error("Error adding item: ", error);
+        .then()
+        .catch(() => {
+          throw new Error("Error adding item");
         });
     }),
 
@@ -58,11 +55,9 @@ export const itemsRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       const itemRef = ref(db, `menuItems/${input.id}`);
       set(itemRef, null)
-        .then(() => {
-          console.log("Item deleted successfully");
-        })
-        .catch((error) => {
-          console.error("Error deleting item: ", error);
+        .then()
+        .catch(() => {
+          throw new Error("Error deleting item");
         });
     }),
 
@@ -101,11 +96,9 @@ export const itemsRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       const itemRef = ref(db, `menuItems/${input.item.id}`);
       set(itemRef, { ...input.item, updatedAt: serverTimestamp() })
-        .then(() => {
-          console.log("Item updated successfully");
-        })
-        .catch((error) => {
-          console.error("Error updating item: ", error);
+        .then()
+        .catch(() => {
+          throw new Error("Error updating item");
         });
     }),
 });

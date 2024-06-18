@@ -48,9 +48,7 @@ import { getDownloadURL, uploadBytes } from "firebase/storage";
 import { toast } from "sonner";
 import { useRouter } from "next/router";
 
-
 const MAX_IMAGES_UPLOAD_LIMIT = 3;
-const IMAGE_PLACEHOLDER_URL = "https://www.svgrepo.com/show/508699/landscape-placeholder.svg";
 
 export default function CreateNewProductPage({
   categories,
@@ -99,11 +97,9 @@ export default function CreateNewProductPage({
 
   // 2. Define a submit handler.
   function onSubmit(values: NewItemFormValuesSchema) {
-    console.log(values);
     if (files.length > 0) {
       uploadImages(files)
         .then((urls) => {
-          // console.log(urls);
           onCreateItem({ ...values, images: urls });
         })
         .catch(() => {
@@ -118,7 +114,6 @@ export default function CreateNewProductPage({
     setFiles((prev) => prev.filter((_, i) => i !== imageIndex));
     setPreviews((prev) => prev.filter((_, i) => i !== imageIndex));
   }
-
 
   return (
     <DashboardLayout pageTitle="New Item">
@@ -290,10 +285,7 @@ export default function CreateNewProductPage({
                                     key={category.id}
                                     value={category.name}
                                   >
-                                    <Badge
-                                      color='blue'
-                                      className="capitalize"
-                                    >
+                                    <Badge color="blue" className="capitalize">
                                       {category.name}
                                     </Badge>
                                   </SelectItem>
@@ -363,7 +355,11 @@ export default function CreateNewProductPage({
                           checked={enableOptions}
                           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                           // @ts-ignore
-                          onCheckedChange={(checked: boolean | ((prevState: boolean) => boolean)) => {
+                          onCheckedChange={(
+                            checked:
+                              | boolean
+                              | ((prevState: boolean) => boolean),
+                          ) => {
                             setEnableOptions(checked);
                             // reset options when unchecked
                             if (!checked) {

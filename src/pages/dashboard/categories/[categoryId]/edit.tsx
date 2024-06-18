@@ -7,7 +7,6 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from "@/components/ui/form";
 import { IconLink } from "@/components/ui/icon-button";
 import { Input } from "@/components/ui/input";
@@ -17,7 +16,7 @@ import type { Category, Item } from "@/lib/types";
 import { db } from "@/server/db";
 import { api } from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { get,  ref } from "firebase/database";
+import { get, ref } from "firebase/database";
 import { ChevronLeft } from "lucide-react";
 import { type GetServerSideProps } from "next";
 import { useForm } from "react-hook-form";
@@ -37,7 +36,6 @@ export default function EditItemPage({
   categoryId: string;
   data: Category;
 }) {
-
   const { onUpdateCategory } = useCategories();
 
   const categoryData = api.menu.items.getItemById.useQuery({ id: categoryId });
@@ -49,7 +47,6 @@ export default function EditItemPage({
       description: data?.description,
     },
   });
-
 
   function onSubmit(values: NewCategoryFormValuesSchema) {
     onUpdateCategory({
@@ -118,7 +115,7 @@ export default function EditItemPage({
                           </FormControl>
                           <FormDescription>
                             {/* description for field */}
-                            Describe the category and what it includes. 
+                            Describe the category and what it includes.
                           </FormDescription>
                           {/* <FormMessage /> */}
                         </FormItem>
@@ -127,11 +124,13 @@ export default function EditItemPage({
                   </div>
                 </div>
               </div>
-              <div className="w-full flex items-center gap-2 md:hidden">
+              <div className="flex w-full items-center gap-2 md:hidden">
                 <ButtonLink href="/dashboard/categories" variant="outline">
                   Discard
                 </ButtonLink>
-                <Button type="submit" className="flex-grow">Save Changes</Button>
+                <Button type="submit" className="flex-grow">
+                  Save Changes
+                </Button>
               </div>
             </form>
           </Form>

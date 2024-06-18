@@ -31,11 +31,9 @@ export const categoriesRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       const newCategoryRef = push(ref(db, "categories"));
       set(newCategoryRef, { ...input, createdAt: serverTimestamp() })
-        .then(() => {
-          console.log("Category added successfully");
-        })
-        .catch((error) => {
-          console.error("Error adding category: ", error);
+        .then()
+        .catch(() => {
+          throw new Error("Error adding category");
         });
     }),
 
@@ -44,11 +42,9 @@ export const categoriesRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       const categoryRef = ref(db, `categories/${input.id}`);
       set(categoryRef, null)
-        .then(() => {
-          console.log("Category deleted successfully");
-        })
-        .catch((error) => {
-          console.error("Error deleting category: ", error);
+        .then()
+        .catch(() => {
+          throw new Error("Error deleting category");
         });
     }),
 
@@ -77,11 +73,9 @@ export const categoriesRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       const categoryRef = ref(db, `categories/${input.id}`);
       set(categoryRef, { ...input, updatedAt: serverTimestamp() })
-        .then(() => {
-          console.log("Category updated successfully");
-        })
-        .catch((error) => {
-          console.error("Error updating category: ", error);
+        .then()
+        .catch(() => {
+          throw new Error("Error updating category");
         });
     }),
 });
