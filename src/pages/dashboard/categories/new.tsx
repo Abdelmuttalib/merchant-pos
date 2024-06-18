@@ -39,10 +39,6 @@ export default function CreateNewCategoryPage() {
     onCreateCategory(values);
   }
 
-  async function onDiscard() {
-    form.reset();
-    await router.push("/dashboard/categories");
-  }
 
   return (
     <DashboardLayout pageTitle="New Category">
@@ -116,12 +112,12 @@ export default function CreateNewCategoryPage() {
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-2 md:hidden">
-                <Button type="button" variant="outline" onClick={onDiscard}>
+              <div className="flex items-center w-full gap-2 md:hidden">
+                <ButtonLink href="/dashboard/categories" variant="outline">
                   Discard
-                </Button>
-                <Button type="submit" className="flex-1">
-                  Save Product
+                </ButtonLink>
+                <Button type="submit" className="flex-grow">
+                  Save Category
                 </Button>
               </div>
             </form>

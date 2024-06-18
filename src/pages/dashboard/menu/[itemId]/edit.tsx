@@ -1,6 +1,6 @@
 import DashboardLayout from "@/components/layout/dashboard-layout";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/form";
 import { IconLink } from "@/components/ui/icon-button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -25,17 +26,20 @@ import {
   type NewItemFormValuesSchema,
   newItemformSchema,
 } from "@/components/views/item/item-form";
+import { useItems } from "@/hooks/use-items";
 import { getCategories } from "@/lib/categories";
 import { ItemStatusEnum, type Category, type Item } from "@/lib/types";
+import { cn } from "@/lib/utils";
 import { db } from "@/server/db";
 import { api } from "@/utils/api";
 import { getItemStatusBadgeColor } from "@/utils/badge";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { get, ref } from "firebase/database";
-import { ChevronLeft, Upload } from "lucide-react";
+import { ChevronLeft, Plus, Trash } from "lucide-react";
 import { type GetServerSideProps } from "next";
 import Image from "next/image";
-import { useForm } from "react-hook-form";
+import { useRouter } from "next/router";
+import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 export default function EditItemPage({
@@ -47,6 +51,9 @@ export default function EditItemPage({
   data: Item;
   categories: Category[];
 }) {
+
+  const { onUpdateItem } = useItems();
+
   const itemData = api.menu.items.getItemById.useQuery({ id: itemId });
 
   const form = useForm({
@@ -59,24 +66,21 @@ export default function EditItemPage({
       stock: data?.stock,
       category: data?.category,
       status: data?.status,
+      images: data?.images,
+      options: data?.options ?? [],
     },
   });
 
-  //   console.log('default data: ', data);
-
-  const updateItemMutation = api.menu.items.updateItem.useMutation({
-    onSuccess: () => {
-      toast.success("Item updated successfully");
-    },
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    name: "options",
   });
 
-  function onUpdateItem(
-    data: NewItemFormValuesSchema & {
-      id: string;
-    },
-  ) {
-    updateItemMutation.mutate({ item: data });
-  }
+
+
+
 
   function onSubmit(values: NewItemFormValuesSchema) {
     onUpdateItem({
@@ -110,9 +114,9 @@ export default function EditItemPage({
                   In stock
                 </Badge>
                 <div className="hidden items-center gap-2 md:ml-auto md:flex">
-                  <Button variant="outline" type="button">
+                  <ButtonLink href="/dashboard/menu" variant="outline">
                     Discard
-                  </Button>
+                  </ButtonLink>
                   <Button type="submit">Save Changes</Button>
                 </div>
               </div>
@@ -310,6 +314,128 @@ export default function EditItemPage({
                       />
                     </div>
                   </div>
+                  <div className="space-y-8 pb-14">
+                    {/* enable options */}
+                    <div className="space-y-5">
+                      <Badge color="gray" className="text-sm">
+                        Options
+                      </Badge>
+                      <div className="space-y-6">
+                        <div className="space-y-2">
+                          {fields.map((field, index) => (
+                            <div
+                              key={field.id}
+                              className="relative grid place-items-end gap-3 sm:grid-cols-5"
+                            >
+                              <div>
+                                <Label>Name</Label>
+                                <Input
+                                  {...form.register(`options.${index}.name`)}
+                                  placeholder="Option name"
+                                />
+                              </div>
+                              <div>
+                                <Label>Price</Label>
+                                <Input
+                                  {...form.register(`options.${index}.price`)}
+                                  type="number"
+                                  placeholder="Option price"
+                                />
+                              </div>
+                              <div>
+                                <Label>Cost</Label>
+                                <Input
+                                  {...form.register(`options.${index}.cost`)}
+                                  type="number"
+                                  placeholder="Option cost"
+                                />
+                              </div>
+                              <div>
+                                <Label>Stock</Label>
+                                <Input
+                                  {...form.register(`options.${index}.stock`)}
+                                  type="number"
+                                  placeholder="Option stock"
+                                />
+                              </div>
+                              <Button
+                                type="button"
+                                variant="destructive"
+                                // className="absolute -right-3 -top-3"
+                                onClick={() => remove(index)}
+                                iconLeft={<Trash className="w-4" />}
+                              >
+                                Remove
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          size="sm"
+                          // className=""
+                          onClick={() =>
+                            append({ name: "", price: 0, cost: 0, stock: 0 })
+                          }
+                          iconLeft={<Plus className="w-4 text-current" />}
+                        >
+                          Add Option
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                  {/* <div className="space-y-4">
+                    <Typography as="h3" variant="lead">
+                      Item Options
+                    </Typography>
+                    <div>
+                      {fields.map((field, index) => (
+                        <div key={field.id} className="flex items-center gap-4">
+                          <FormField
+                            control={form.control}
+                            name={`options.${index}.name`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <Input placeholder="Option name" {...field} />
+                                </FormControl>
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name={`options.${index}.price`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <Input
+                                    type="number"
+                                    placeholder="Option price"
+                                    {...field}
+                                  />
+                                </FormControl>
+                              </FormItem>
+                            )}
+                          />
+                          <Button
+                            variant="destructive"
+                            type="button"
+                            onClick={() => remove(index)}
+                          >
+                            Remove
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                    <Button
+                      variant="outline"
+                      type="button"
+                      onClick={() => append({ name: "", price: 0 })}
+                    >
+                      Add Option
+                    </Button>
+                  </div> */}
                 </div>
                 <div className="grid auto-rows-max items-start gap-2">
                   <div className="space-y-1">
@@ -317,46 +443,52 @@ export default function EditItemPage({
                       Images
                     </Typography>
                   </div>
-                  <div className="grid gap-2">
-                    <Image
-                      src="https://images.unsplash.com/photo-1606963060045-1e3eaa0e6eac?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                      alt="Product image"
-                      className="aspect-video w-full rounded-md object-cover"
-                      height="300"
-                      width="300"
-                    />
-                    <div className="grid grid-cols-3 gap-2">
-                      <button>
-                        <Image
-                          src="https://images.unsplash.com/photo-1606963060045-1e3eaa0e6eac?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                          alt="Product image"
-                          className="aspect-square w-full rounded-md object-cover"
-                          height="84"
-                          width="84"
-                        />
-                      </button>
-                      <button>
-                        <Image
-                          src="https://images.unsplash.com/photo-1606963060045-1e3eaa0e6eac?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                          alt="Product image"
-                          className="aspect-square w-full rounded-md object-cover"
-                          height="84"
-                          width="84"
-                        />
-                      </button>
-                      <button className="flex aspect-square w-full items-center justify-center rounded-md border-2 border-dashed border-foreground-muted-dark">
-                        <Upload className="h-6 w-6 text-foreground-lighter" />
-                        <span className="sr-only">Upload</span>
-                      </button>
-                    </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {form.getValues().images?.length > 0 ? (
+                      form.getValues().images.map((image, index) => (
+                        <div
+                          key={image}
+                          className={cn(
+                            "relative aspect-video w-full rounded-md object-cover",
+                            {
+                              "col-span-2": index === 0,
+                              "col-span-1": index !== 0,
+                            },
+                          )}
+                        >
+                          <Image
+                            src={image}
+                            alt="Product image"
+                            className={cn(
+                              "relative aspect-video w-full rounded-md object-cover",
+                              {
+                                "col-span-2": index === 0,
+                                "col-span-1": index !== 0,
+                              },
+                            )}
+                            // layout="fill"
+                            width={index === 0 ? 300 : 84}
+                            height={index === 0 ? 300 : 84}
+                            // width={index === 0 ? "300" : '84'}
+                            // height={index === 0 ? "300" : '84'}
+                          />
+                        </div>
+                      ))
+                    ) : (
+                      <div className="col-span-2 flex h-56 items-center justify-center rounded-md bg-accent-hover/70 text-sm font-normal italic text-foreground-lighter">
+                        no images
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
-              <div className="flex items-center justify-center gap-2 md:hidden">
-                <Button variant="outline" size="sm" type="button">
+              <div className="my-10 flex w-full items-center justify-center gap-2 md:hidden">
+                <ButtonLink href="/dashboard/menu" variant="outline">
                   Discard
+                </ButtonLink>
+                <Button type="submit" className="flex-grow">
+                  Save Changes
                 </Button>
-                <Button size="sm">Save Changes</Button>
               </div>
             </form>
           </Form>

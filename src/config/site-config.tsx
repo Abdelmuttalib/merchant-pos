@@ -1,4 +1,5 @@
-import { HomeIcon, SettingsIcon, StoreIcon } from "@/components/icons";
+import { HomeIcon, SettingsIcon } from "@/components/icons";
+import { env } from "@/env";
 import { Package } from "lucide-react";
 
 export const siteConfig = {
@@ -8,7 +9,7 @@ export const siteConfig = {
     "UTAK POS is a point of sale system for businesses. UTAK POS is designed to be simple and easy to use, with features that help you manage your business more efficiently.",
   type: "website",
   logo: "/favicon.ico",
-  siteUrl: "",
+  siteUrl: env.NEXT_PUBLIC_WEBSITE_URL,
   //   navItems: [
   //     {
   //       href: "/",

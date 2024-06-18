@@ -1,5 +1,4 @@
 import DashboardLayout from "@/components/layout/dashboard-layout";
-import { Badge } from "@/components/ui/badge";
 import { Button, ButtonLink } from "@/components/ui/button";
 import {
   Form,
@@ -13,6 +12,7 @@ import {
 import { IconLink } from "@/components/ui/icon-button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useCategories } from "@/hooks/use-categories";
 import type { Category, Item } from "@/lib/types";
 import { db } from "@/server/db";
 import { api } from "@/utils/api";
@@ -20,9 +20,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { get,  ref } from "firebase/database";
 import { ChevronLeft } from "lucide-react";
 import { type GetServerSideProps } from "next";
-import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import { z } from "zod";
 
 export const newCategoryformSchema = z.object({
@@ -39,7 +37,8 @@ export default function EditItemPage({
   categoryId: string;
   data: Category;
 }) {
-  const router = useRouter();
+
+  const { onUpdateCategory } = useCategories();
 
   const categoryData = api.menu.items.getItemById.useQuery({ id: categoryId });
 
@@ -51,31 +50,12 @@ export default function EditItemPage({
     },
   });
 
-  //   console.log('default data: ', data);
-
-  const updateCategoryMutation = api.menu.categories.updateCategory.useMutation(
-    {
-      onSuccess: async () => {
-        toast.success("Category updated successfully");
-        await router.push("/dashboard/categories");
-      },
-    },
-  );
-
-  function onUpdateCategory(data: {
-    id: string;
-    name: string;
-    description?: string | undefined;
-  }) {
-    updateCategoryMutation.mutate(data);
-  }
 
   function onSubmit(values: NewCategoryFormValuesSchema) {
     onUpdateCategory({
       id: categoryId,
       ...values,
     });
-    console.log("values: ", values);
   }
 
   return (
@@ -147,11 +127,11 @@ export default function EditItemPage({
                   </div>
                 </div>
               </div>
-              <div className="w-ful flex items-center gap-2 md:hidden">
+              <div className="w-full flex items-center gap-2 md:hidden">
                 <ButtonLink href="/dashboard/categories" variant="outline">
                   Discard
                 </ButtonLink>
-                <Button type="submit">Save Changes</Button>
+                <Button type="submit" className="flex-grow">Save Changes</Button>
               </div>
             </form>
           </Form>

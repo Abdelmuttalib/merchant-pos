@@ -543,9 +543,9 @@ export default function CreateNewProductPage({
                 </div>
               </div>
               <div className="flex items-center justify-center gap-2 md:hidden">
-                <Button variant="outline" size="sm">
+                <ButtonLink href="/dashboard/menu" variant="outline" size="sm">
                   Discard
-                </Button>
+                </ButtonLink>
                 <Button size="sm">Save Product</Button>
               </div>
             </form>
