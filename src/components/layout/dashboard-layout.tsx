@@ -264,7 +264,7 @@ function DashboardHeader({ pageTitle }: { pageTitle: string }) {
             </IconButton> */}
             {/* notifications */}
             <NotificationsDialog />
-            <NewItemFormDialog />
+            {/* <NewItemFormDialog /> */}
           </div>
         </div>
       </Container>

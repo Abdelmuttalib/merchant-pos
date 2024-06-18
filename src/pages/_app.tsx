@@ -30,7 +30,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
             <Component {...pageProps} />
             <Analytics mode={env.NEXT_PUBLIC_NODE_ENV} />
           </main>
-          <TailwindBreakpointIndicator />
+          {/* <TailwindBreakpointIndicator /> */}
         </ThemeProvider>
       </ThemeColorWrapper>
     </QueryClientProvider>
