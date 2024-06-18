@@ -38,9 +38,7 @@ import { get, ref } from "firebase/database";
 import { ChevronLeft, Plus, Trash } from "lucide-react";
 import { type GetServerSideProps } from "next";
 import Image from "next/image";
-import { useRouter } from "next/router";
 import { useFieldArray, useForm } from "react-hook-form";
-import { toast } from "sonner";
 
 export default function EditItemPage({
   itemId,
@@ -51,7 +49,6 @@ export default function EditItemPage({
   data: Item;
   categories: Category[];
 }) {
-
   const { onUpdateItem } = useItems();
 
   const itemData = api.menu.items.getItemById.useQuery({ id: itemId });
@@ -78,10 +75,6 @@ export default function EditItemPage({
     name: "options",
   });
 
-
-
-
-
   function onSubmit(values: NewItemFormValuesSchema) {
     onUpdateItem({
       id: itemId,
@@ -95,6 +88,8 @@ export default function EditItemPage({
         <main className="grid flex-1 items-start gap-4 md:gap-8">
           <Form {...form}>
             <form
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
               onSubmit={form.handleSubmit(onSubmit)}
               className="mx-auto grid w-full flex-1 auto-rows-max gap-4"
             >
