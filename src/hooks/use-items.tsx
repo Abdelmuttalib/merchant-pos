@@ -44,6 +44,8 @@ export function useItems() {
       id: string;
     },
   ) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     updateItemMutation.mutate({ item: data });
   }
 

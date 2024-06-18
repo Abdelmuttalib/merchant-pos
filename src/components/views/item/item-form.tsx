@@ -95,6 +95,7 @@ export const newItemformSchema = z.object({
   category: z.string().min(1),
   status: z.string().min(1),
   options: z.array(itemOptionSchema).optional(),
+  createdAt: z.number().optional(),
 });
 
 export type NewItemFormValuesSchema = z.infer<typeof newItemformSchema>;

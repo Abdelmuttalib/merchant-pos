@@ -81,6 +81,7 @@ export const itemsRouter = createTRPCRouter({
       z.object({
         item: z.object({
           id: z.string(),
+          images: z.array(z.string()),
           name: z.string(),
           description: z.string(),
           category: z.string(),
@@ -90,6 +91,7 @@ export const itemsRouter = createTRPCRouter({
           // sales: z.number(),
           stock: z.number(),
           options: z.array(z.record(z.any())).optional(),
+          createdAt: z.number(),
         }),
       }),
     )

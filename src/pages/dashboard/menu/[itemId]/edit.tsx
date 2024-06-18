@@ -65,8 +65,11 @@ export default function EditItemPage({
       status: data?.status,
       images: data?.images,
       options: data?.options ?? [],
+      createdAt: data?.createdAt,
     },
   });
+
+  console.log(data);
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -76,6 +79,7 @@ export default function EditItemPage({
   });
 
   function onSubmit(values: NewItemFormValuesSchema) {
+    // console.log(values);
     onUpdateItem({
       id: itemId,
       ...values,
