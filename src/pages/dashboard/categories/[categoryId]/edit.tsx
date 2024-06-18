@@ -22,12 +22,6 @@ import { type GetServerSideProps } from "next";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-// export const newCategoryformSchema = z.object({
-//   name: z.string(),
-//   description: z.string().optional(),
-// });
-
-// export type NewCategoryFormValuesSchema = z.infer<typeof newCategoryformSchema>;
 
 const editCategoryformSchema = z.object({
   name: z.string(),

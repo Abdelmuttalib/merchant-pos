@@ -4,22 +4,19 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/router";
 import { HomeIcon, SettingsIcon, SquaresIcon, StoreIcon } from "../icons";
-import { IconButton } from "@/components/ui/icon-button";
-import { AlignJustifyIcon, Bell, MenuIcon, Plus, Search } from "lucide-react";
 import { NotificationsDialog } from "../notifications/notifications-dialog";
 import Seo from "../seo";
 
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { NewItemFormDialog } from "@/components/views/item/item-form";
+// import {
+//   Accordion,
+//   AccordionContent,
+//   AccordionItem,
+//   AccordionTrigger,
+// } from "@/components/ui/accordion";
+// import { NewItemFormDialog } from "@/components/views/item/item-form";
 import Typography from "@/components/ui/typography";
 import { siteConfig } from "@/config/site-config";
 import { sitePaths } from "@/lib/site-paths";
-import { CustomDialog } from "../ui/animated-dialog";
 import { MobileSidebarNav } from "./mobile-sidebar-nav";
 
 interface DashboardLayoutProps {

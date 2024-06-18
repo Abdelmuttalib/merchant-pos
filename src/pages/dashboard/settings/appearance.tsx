@@ -2,7 +2,6 @@ import DashboardLayout from "@/components/layout/dashboard-layout";
 
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import {
   ThemeColorSelect,
   ThemeModeSelect,

@@ -55,7 +55,6 @@ export default function CreateNewProductPage({
 }: {
   categories: Category[];
 }) {
-  const router = useRouter();
   const { onCreateItem } = useItems();
 
   // 1. Define your form.

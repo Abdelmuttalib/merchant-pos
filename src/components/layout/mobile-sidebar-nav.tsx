@@ -1,19 +1,4 @@
-import {
-  Home,
-  ImageIcon,
-  LineChart,
-  ListFilter,
-  Menu,
-  MoreHorizontal,
-  Package,
-  Package2,
-  PanelLeft,
-  Plus,
-  Search,
-  ShoppingCart,
-  Users2,
-} from "lucide-react";
-import Link from "next/link";
+import { Menu } from "lucide-react";
 import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
 import { IconButton } from "@/components/ui/icon-button";
 import { SidebarNav } from "./dashboard-layout";

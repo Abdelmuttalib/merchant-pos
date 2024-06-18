@@ -75,7 +75,7 @@ export function ListView({
                 <TableCell>{category.description}</TableCell>
                 <TableCell className="hidden md:table-cell">
                   {/* 2023-07-12 10:42 AM */}
-                  {formatShortDateWithYear(category.createdAt)}
+                  {formatShortDateWithYear(category.createdAt as unknown as string)}
                 </TableCell>
                 <TableCell>
                   <CategoryMenuActions categoryId={category?.id} />

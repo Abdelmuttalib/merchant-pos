@@ -21,7 +21,7 @@ export function useCategories() {
     onSuccess: async () => {
       // Invalidate and refetch
       await apiContext.menu.categories.getCategories.invalidate();
-      toast.success('Item added successfully');
+      toast.success('Category added successfully');
       await redirectToCategoriesPage();
     },
   });

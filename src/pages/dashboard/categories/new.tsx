@@ -14,20 +14,23 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from "@/components/ui/form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import {
-  type NewCategoryFormValuesSchema,
-  newCategoryformSchema,
-} from "./[categoryId]/edit";
-import { useRouter } from "next/router";
 import { useCategories } from "@/hooks/use-categories";
+import { z } from "zod";
+
+
+
+export const newCategoryformSchema = z.object({
+  name: z.string(),
+  description: z.string().optional(),
+});
+
+export type NewCategoryFormValuesSchema = z.infer<typeof newCategoryformSchema>;
 
 export default function CreateNewCategoryPage() {
-  const router = useRouter();
 
   const { onCreateCategory } = useCategories();
 
